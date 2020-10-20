@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+String filename = getResources().getString(R.string.share_preference_file);
+String accountname = getResources().getString()
+        SharedPreferences spfile = getSharedPreferences(filename, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor =spfile.edit();
 
 
     }
