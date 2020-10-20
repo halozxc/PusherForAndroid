@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Pusher</string>
+    <string name="share_preference_file">sp_userinfo</string>
+    <string name="user_account">user_account</string>
+    <string name="user_nickname">user_nickname</string>
+    <string name="user_password">user_password</string>
+    <string name="login_token">login_token</string>
+
+</resources>
