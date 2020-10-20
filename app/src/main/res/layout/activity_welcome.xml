@@ -49,10 +49,10 @@
         android:textSize="20dp"
         android:textColor="@color/colorAccent"
         app:layout_constraintStart_toStartOf="@+id/textView"
-        app:layout_constraintTop_toBottomOf="@+id/etEmailAddress" />
+        app:layout_constraintTop_toBottomOf="@+id/etAccount" />
 
     <EditText
-        android:id="@+id/etEmailAddress"
+        android:id="@+id/etAccount"
         android:layout_width="329dp"
         android:layout_height="49dp"
         android:layout_marginTop="16dp"
@@ -69,7 +69,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
     <EditText
-        android:id="@+id/etEmailAddress2"
+        android:id="@+id/etPassword"
         android:layout_width="331dp"
         android:layout_height="41dp"
         android:layout_marginTop="16dp"
@@ -79,7 +79,7 @@
         android:ems="10"
         android:inputType="textPassword"
         android:paddingHorizontal="5dp"
-        app:layout_constraintEnd_toEndOf="@+id/etEmailAddress"
+        app:layout_constraintEnd_toEndOf="@+id/etAccount"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/textView3"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -95,8 +95,8 @@
         android:textColor="@color/colorWhite"
         android:textSize="20dp"
         android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="@+id/etEmailAddress2"
-        app:layout_constraintTop_toBottomOf="@+id/etEmailAddress2" />
+        app:layout_constraintStart_toStartOf="@+id/etPassword"
+        app:layout_constraintTop_toBottomOf="@+id/etPassword" />
 
     <ImageView
         android:id="@+id/imageView2"

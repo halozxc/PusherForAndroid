@@ -38,10 +38,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-String filename = getResources().getString(R.string.share_preference_file);
-String accountname = getResources().getString()
-        SharedPreferences spfile = getSharedPreferences(filename, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor =spfile.edit();
+Intent intent =new Intent(MainActivity.this,login.class);
+startActivity(intent);
 
 
     }
