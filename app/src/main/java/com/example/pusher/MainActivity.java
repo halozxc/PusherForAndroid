@@ -1,6 +1,7 @@
 package com.example.pusher;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -14,7 +15,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -38,12 +38,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-Intent intent =new Intent(MainActivity.this,login.class);
-startActivity(intent);
+     intentLogin();
 
 
     }
+    private void intentLogin(){
+        Intent intent =new Intent(MainActivity.this,login.class);
 
+        startActivityForResult(intent,1);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode){
+            case 1://login sucess
+                if(resultCode  ==RESULT_OK){
+                    Toast.makeText(MainActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                }
+                break;
+        }
+    }
+
+    //
     void registeUserInfo(){
 
         OkHttpClient client =new OkHttpClient();

@@ -2,6 +2,7 @@ package com.example.pusher;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +18,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Objects;
+
+import javax.xml.transform.Result;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -34,8 +37,10 @@ public class login extends AppCompatActivity {
     String token;
     SharedPreferences spfile;
     SharedPreferences.Editor editor;
+    Button btLogin;
     EditText etAccount;
     EditText etPassword;
+    TextView tvRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,14 +48,20 @@ public class login extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
          spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
          etAccount = findViewById(R.id.etAccount);
-        Button btLogin = findViewById(R.id.btLogin);
+      btLogin = findViewById(R.id.btLogin);
          etPassword = findViewById(R.id.etPassword);
-
+tvRegister = findViewById(R.id.tvRegister);
         account = spfile.getString( getString(R.string.user_account),null);
         password = spfile.getString( getString(R.string.user_password),null);
         token = spfile.getString( getString(R.string.login_token),null);
         etAccount.setText(account);
         etPassword.setText(password);
+        tvRegister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                btLogin.setText("注册");
+            }
+        });
         btLogin.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -59,13 +70,56 @@ public class login extends AppCompatActivity {
 //                editor.putString(getString(R.string.user_password), String.valueOf(etPassword.getText()));
 //                editor.apply();
 //                editor.commit();
- Toast.makeText(login.this,"logining",Toast.LENGTH_SHORT).show();
+               String actionstate = String.valueOf(btLogin.getText()) ;
+                if(actionstate.equals("登录")){
+                    Toast.makeText(login.this,"logining",Toast.LENGTH_SHORT).show();
 
-                loginAction();
+                    loginAction();
+                }
+                else if (actionstate.equals("注册")){
+                 registAction();
+                }
+
+            }
+        });
+    }
+    private  void registAction(){
+
+        OkHttpClient client =new OkHttpClient();
+        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+
+        JSONObject requestContent =new JSONObject();
+        try {
+            requestContent.put("username",etAccount.getText());
+            requestContent.put("password",etPassword.getText());
+            requestContent.put("nickname","new_pusher");
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
+        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/register").post(requestBody).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                Log.d("failure","failure");
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String res = Objects.requireNonNull(response.body()).string();
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Log.d("requestresult",res);
+                    }
+                });
             }
         });
     }
 private void loginAction(){
+        btLogin.setClickable(false);
     OkHttpClient client =new OkHttpClient();
     MediaType mediaType = MediaType.get("application/json; charset=utf-8");
 
@@ -88,16 +142,16 @@ private void loginAction(){
         @Override
         public void onFailure(@NotNull Call call, @NotNull IOException e) {
             Log.d("failure","failure");
-
         }
 
         @Override
-        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+        public void onResponse(@NotNull Call call, @NotNull final Response response) throws IOException {
             final String res = Objects.requireNonNull(response.body()).string();
 
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    btLogin.setClickable(true);
                     Log.d("requestresult",res);
                    editor = spfile.edit();
                     editor.putString(getString(R.string.user_account), String.valueOf(etAccount.getText()));
@@ -106,9 +160,22 @@ private void loginAction(){
                     editor.commit();
                     try {
                         JSONObject reponse  = new JSONObject(res);
-                        islogin = reponse.getString("msg") =="登录成功";
-                        JSONObject token  =new JSONObject();
+                        Log.d("msg is:",reponse.getString("msg"));
+                       if(reponse.getString("msg").equals("登录成功") )
+                       {  islogin = true;
+
+                           String data  = reponse.getString("data");
+                           Log.d("data is",data);
+                           JSONObject token  =new JSONObject(data);
+                           editor.putString("login_token",token.getString("token"));
+                           Log.d("token is:",token.getString("token"));
+                           Intent intent =new Intent();
+                           setResult(RESULT_OK);
+                           finish();
+                       }
+
                     } catch (JSONException e) {
+                        Toast.makeText(login.this,"oops,登录错误了",Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
 
