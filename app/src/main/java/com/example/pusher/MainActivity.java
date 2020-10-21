@@ -43,9 +43,6 @@ startActivity(intent);
 
 
     }
-     void CheckLoginState() {
-
-    }
 
     void registeUserInfo(){
 
