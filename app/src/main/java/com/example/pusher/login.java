@@ -48,9 +48,9 @@ public class login extends AppCompatActivity {
         setContentView(R.layout.activity_welcome);
          spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
          etAccount = findViewById(R.id.etAccount);
-      btLogin = findViewById(R.id.btLogin);
+         btLogin = findViewById(R.id.btLogin);
          etPassword = findViewById(R.id.etPassword);
-tvRegister = findViewById(R.id.tvRegister);
+         tvRegister = findViewById(R.id.tvRegister);
         account = spfile.getString( getString(R.string.user_account),null);
         password = spfile.getString( getString(R.string.user_password),null);
         token = spfile.getString( getString(R.string.login_token),null);
@@ -72,7 +72,7 @@ tvRegister = findViewById(R.id.tvRegister);
 //                editor.commit();
                String actionstate = String.valueOf(btLogin.getText()) ;
                 if(actionstate.equals("登录")){
-                    Toast.makeText(login.this,"logining",Toast.LENGTH_SHORT).show();
+
 
                     loginAction();
                 }
@@ -119,7 +119,8 @@ tvRegister = findViewById(R.id.tvRegister);
         });
     }
 private void loginAction(){
-        btLogin.setClickable(false);
+    Toast.makeText(login.this,"logining",Toast.LENGTH_SHORT).show();//tips
+        btLogin.setClickable(false);//避免重复请求
     OkHttpClient client =new OkHttpClient();
     MediaType mediaType = MediaType.get("application/json; charset=utf-8");
 
@@ -172,6 +173,9 @@ private void loginAction(){
                            Intent intent =new Intent();
                            setResult(RESULT_OK);
                            finish();
+                       }
+                       else{
+                          Toast.makeText(login.this,reponse.getString("msg"),Toast.LENGTH_SHORT).show();
                        }
 
                     } catch (JSONException e) {
