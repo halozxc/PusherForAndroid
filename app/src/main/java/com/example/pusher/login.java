@@ -179,7 +179,7 @@ private void loginAction(){
                        else{
                           Toast.makeText(login.this,reponse.getString("msg"),Toast.LENGTH_SHORT).show();
                        }
-
+btLogin.setClickable(true);
                     } catch (JSONException e) {
                         Toast.makeText(login.this,"oops,登录错误了",Toast.LENGTH_SHORT).show();
                         e.printStackTrace();

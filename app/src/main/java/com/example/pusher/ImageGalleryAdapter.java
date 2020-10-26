@@ -1,5 +1,6 @@
 package com.example.pusher;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,11 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapter.ViewHolder>{
-private List<GalleryItem> galleryItemList;
-ImageGalleryAdapter(List<GalleryItem> items){
+private List<com.example.pusher.List> galleryItemList;
+Activity activity;
+ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
     galleryItemList = items;
+    this.activity =activity;
 }
     @NonNull
     @Override
@@ -30,8 +33,10 @@ ImageGalleryAdapter(List<GalleryItem> items){
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-     GalleryItem galleryItem = galleryItemList.get(position);
-        
+     com.example.pusher.List galleryItem = galleryItemList.get(position);
+     holder.accountText.setText( galleryItem.getDescription());
+
+     Glide.with(activity).load("http://101.37.172.244:8089/test/"+galleryItem.getPicUri()).into(holder.contentImage);
     }
 
     @Override
@@ -54,12 +59,12 @@ ImageGalleryAdapter(List<GalleryItem> items){
         }
     }
 }
-class GalleryItem{
-    int imageItemNUm;
-    boolean isfavorite;
-    String userName;
-    String imageURl;
-    String userPortraitURL;
-
-
-}
+//class GalleryItem{
+//    int imageItemNUm;
+//    boolean isfavorite;
+//    String userName;
+//    String imageURl;
+//    String userPortraitURL;
+//
+//
+//}

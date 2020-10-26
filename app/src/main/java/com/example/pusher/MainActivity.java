@@ -3,6 +3,7 @@ package com.example.pusher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Objects;
+
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -39,15 +42,26 @@ import okio.BufferedSink;
 public class MainActivity extends AppCompatActivity {
     String token;
     SharedPreferences spfile;
+    RecyclerView rvImageGallery ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        rvImageGallery = findViewById(R.id.rvImageGallery);
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
         token = spfile.getString( getString(R.string.login_token),null);
-        intentLogin();
-loadmenubackground();
+
+        if(token==null)
+        {
+            intentLogin();
+        }
+        else{
+            getImageList();
+
+        }
+
+         loadmenubackground();//bing image everyday
 
     }
     void loadmenubackground(){
@@ -59,7 +73,7 @@ loadmenubackground();
 
 
 
-        final Request request = new Request.Builder().url(requestBingpic).addHeader("token",token).build();
+        final Request request = new Request.Builder().url(requestBingpic).build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -84,7 +98,11 @@ loadmenubackground();
         });
 
     }
+private void showlayout(java.util.List imageList ){
 
+        rvImageGallery.setLayoutManager(new LinearLayoutManager(this));
+        rvImageGallery.setAdapter(new ImageGalleryAdapter(imageList,MainActivity.this));
+}
     private void getImageList(){
         if(token!=null){
             OkHttpClient client =new OkHttpClient();
@@ -118,8 +136,20 @@ loadmenubackground();
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                           // Log.d("requestresult",imagePage.getData().getList().toString());
+                           Log.d("requestresult",res);
+                           if(imagePage.getMsg().equals("token失效，请重新登录"))
+                           {intentLogin();
+                           return;}
+                           else if(imagePage.getMsg().equals("显示成功")){try{showlayout(imagePage.getData().getList());
+                           }
+                           catch (Exception e)
+                           {
+                               e.printStackTrace();
+                           }}
 
-                            Log.d("requestresult",res);
+
+
                         }
                     });
                 }
