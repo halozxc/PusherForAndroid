@@ -12,7 +12,12 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.model.stream.HttpUriLoader;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -32,20 +37,102 @@ import okhttp3.Response;
 import okio.BufferedSink;
 
 public class MainActivity extends AppCompatActivity {
-
+    String token;
+    SharedPreferences spfile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
+        token = spfile.getString( getString(R.string.login_token),null);
         intentLogin();
+loadmenubackground();
 
+    }
+    void loadmenubackground(){
+        final ImageView bgImageView = findViewById(R.id.menu_background);
+        String requestBingpic ="http:guolin.tech/api/bing_pic";
+        OkHttpClient client =new OkHttpClient();
+
+
+
+
+
+        final Request request = new Request.Builder().url(requestBingpic).addHeader("token",token).build();
+        Call call = client.newCall(request);
+        call.enqueue(new Callback() {
+            @Override
+            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                final String res = Objects.requireNonNull(response.body()).string();
+
+
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.with(MainActivity.this).load(res.toString()).into(bgImageView);
+                        Log.d("BingImageURL",res);
+                    }
+                });
+            }
+        });
+
+    }
+
+    private void getImageList(){
+        if(token!=null){
+            OkHttpClient client =new OkHttpClient();
+            MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+            JSONObject requestContent =new JSONObject();
+            try {
+                requestContent.put("pageNum",1);
+                requestContent.put("pageSize",15);
+
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
+
+
+            final Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/images?pageNum=1&pageSize=10").addHeader("token",token).build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    e.printStackTrace();
+                }
+
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+                    final String res = Objects.requireNonNull(response.body()).string();
+
+                    Gson gson = new Gson();
+                   final  com.example.pusher.ImagePage imagePage = gson.fromJson(res,com.example.pusher.ImagePage.class);
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+
+                            Log.d("requestresult",res);
+                        }
+                    });
+                }
+            });
+
+        }
 
     }
     private void intentLogin(){
         Intent intent =new Intent(MainActivity.this,login.class);
 
         startActivityForResult(intent,1);
+
     }
 
     @Override
@@ -55,6 +142,9 @@ public class MainActivity extends AppCompatActivity {
             case 1://login sucess
                 if(resultCode  ==RESULT_OK){
                     Toast.makeText(MainActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
+                    spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
+                    token = spfile.getString(getString(R.string.login_token),null);//refresh token
+                    getImageList();
                 }
                 break;
         }

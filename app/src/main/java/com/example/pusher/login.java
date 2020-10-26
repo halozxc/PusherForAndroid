@@ -97,7 +97,7 @@ public class login extends AppCompatActivity {
             e.printStackTrace();
         }
         RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
-        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/register").post(requestBody).build();
+        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/register").build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -169,6 +169,8 @@ private void loginAction(){
                            Log.d("data is",data);
                            JSONObject token  =new JSONObject(data);
                            editor.putString("login_token",token.getString("token"));
+                           editor.apply();
+                           editor.commit();
                            Log.d("token is:",token.getString("token"));
                            Intent intent =new Intent();
                            setResult(RESULT_OK);
