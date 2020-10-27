@@ -1,6 +1,7 @@
 package com.example.pusher;
 
 import android.app.Activity;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
 import java.util.List;
 
@@ -32,11 +38,14 @@ ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
      com.example.pusher.List galleryItem = galleryItemList.get(position);
+
      holder.accountText.setText( galleryItem.getDescription());
 
-     Glide.with(activity).load("http://101.37.172.244:8089/test/"+galleryItem.getPicUri()).into(holder.contentImage);
+    Glide.with(activity).load("http://101.37.172.244:8089/test/"+galleryItem.getPicUri()).error(Glide.with(activity).load(R.drawable.ic_default)).into(holder.contentImage);
+
+
     }
 
     @Override
