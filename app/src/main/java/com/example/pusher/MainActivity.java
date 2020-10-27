@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.model.stream.HttpUriLoader;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     String token;
     SharedPreferences spfile;
     RecyclerView rvImageGallery ;
+    FloatingActionButton publicationNewImage ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         rvImageGallery = findViewById(R.id.rvImageGallery);
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
         token = spfile.getString( getString(R.string.login_token),null);
+publicationNewImage =findViewById(R.id.fabPublicNewImage);
 
         if(token==null)
         {
@@ -62,7 +65,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
          loadmenubackground();//bing image everyday
-
+publicationNewImage.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View view) {
+        Intent intent =new Intent(MainActivity.this,PublicationImageActivity.class);
+        startActivity(intent);
+    }
+});
     }
     void loadmenubackground(){
         final ImageView bgImageView = findViewById(R.id.menu_background);
