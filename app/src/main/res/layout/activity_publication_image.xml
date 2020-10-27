@@ -20,6 +20,8 @@
         tools:text="发送" />
 </LinearLayout>
     <ImageView
+
+        android:clickable="true"
         android:id="@+id/ivpublicationContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
