@@ -3,6 +3,8 @@ package com.example.pusher;
 
 
 public class List {
+private  int uid;
+private String nickName;
 
     private int goodCount;
     private String picUri;
@@ -10,6 +12,23 @@ public class List {
     private String title;
     private int picId;
     private String username;
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
+
     public void setGoodCount(int goodCount) {
          this.goodCount = goodCount;
      }

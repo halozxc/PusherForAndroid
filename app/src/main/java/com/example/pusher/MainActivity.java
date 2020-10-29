@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         rvImageGallery = findViewById(R.id.rvImageGallery);
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
         token = spfile.getString( getString(R.string.login_token),null);
+
 publicationNewImage =findViewById(R.id.fabPublicNewImage);
 
         if(token==null)
@@ -127,7 +128,7 @@ private void showlayout(java.util.List imageList ){
             RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
 
 
-            final Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/images?pageNum=1&pageSize=10").addHeader("token",token).build();
+            final Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/images?pageNum=1&pageSize=5").addHeader("token",token).build();
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
                 @Override

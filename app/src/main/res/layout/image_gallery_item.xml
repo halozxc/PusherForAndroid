@@ -23,8 +23,8 @@
 
                   <ImageView
                       android:id="@+id/imPortrait"
-                      android:layout_width="30dp"
-                      android:layout_height="30dp"
+                      android:layout_width="20dp"
+                      android:layout_height="20dp"
                       android:elevation="3dp"
                       android:background="@drawable/ic_default_portrait_boy"
                       android:layout_gravity="center_vertical"
@@ -64,8 +64,8 @@
 
                <ImageView
                    android:id="@+id/imFavorite"
-                   android:layout_width="30dp"
-                   android:layout_height="30dp"
+                   android:layout_width="20dp"
+                   android:layout_height="20dp"
 android:clickable="true"
                    android:layout_gravity="center_vertical"
                    android:background="@mipmap/favorite"

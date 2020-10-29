@@ -41,9 +41,9 @@ ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
      com.example.pusher.List galleryItem = galleryItemList.get(position);
 
-     holder.accountText.setText( galleryItem.getDescription());
+     holder.accountText.setText( galleryItem.getNickName());
 
-    Glide.with(activity).load("http://101.37.172.244:8089/test/"+galleryItem.getPicUri()).error(Glide.with(activity).load(R.drawable.ic_default)).into(holder.contentImage);
+    Glide.with(activity).load("http://101.37.172.244:8099/zxm/"+galleryItem.getPicUri()).error(Glide.with(activity).load(R.drawable.ic_default)).into(holder.contentImage);
 
 
     }
