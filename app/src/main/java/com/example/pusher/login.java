@@ -13,6 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,8 +56,8 @@ public class login extends AppCompatActivity {
          btLogin = findViewById(R.id.btLogin);
          etPassword = findViewById(R.id.etPassword);
          tvRegister = findViewById(R.id.tvRegister);
-        account = spfile.getString( getString(R.string.user_account),null);
-        password = spfile.getString( getString(R.string.user_password),null);
+        account = spfile.getString( getString(R.string.user_account),null)==null ? String.valueOf(etAccount.getText()) : spfile.getString( getString(R.string.user_account),null);
+        password = spfile.getString( getString(R.string.user_password),null)==null? String.valueOf(etPassword.getText()):spfile.getString( getString(R.string.user_password),null);
         token = spfile.getString( getString(R.string.login_token),null);
         etAccount.setText(account);
         etPassword.setText(password);
@@ -93,15 +95,16 @@ public class login extends AppCompatActivity {
         Random r =new Random(System.currentTimeMillis());
         JSONObject requestContent =new JSONObject();
         try {
-            requestContent.put("username",etAccount.getText());
-            requestContent.put("password",etPassword.getText());
+            requestContent.put("username",String.valueOf(etAccount.getText()) );
+            requestContent.put("password",String.valueOf(etPassword.getText()));
+            requestContent.put("nickname",String.valueOf("new_pusher"+r.nextInt()%100));
 
-            requestContent.put("nickname","new_pusher"+r.nextInt());
+
         }catch (Exception e){
             e.printStackTrace();
         }
         RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
-        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/register").build();
+        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/register").post(requestBody).build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -113,9 +116,28 @@ public class login extends AppCompatActivity {
             public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                 final String res = Objects.requireNonNull(response.body()).string();
 
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        try {
+                            JSONObject reponse = new  JSONObject(res);
+                            if(reponse.getString("msg").equals("注册成功")){
+                                JSONObject newUser = new JSONObject(reponse.getString("data"));
+                                editor.putString("user_account",newUser.getString("username"));
+                                editor.putString("user_nickname",newUser.getString("nickname"));
+                                editor.putString("user_password",newUser.getString("password"));
+                                editor.putString("user_id",newUser.getString("uid"));
+                            }
+
+                            Toast.makeText(login.this,reponse.getString("msg"),Toast.LENGTH_SHORT).show();
+
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        btLogin.setText("登录");
                         Log.d("requestresult",res);
                     }
                 });
@@ -125,7 +147,7 @@ public class login extends AppCompatActivity {
 private void loginAction(){
     etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     Toast.makeText(login.this,"logining",Toast.LENGTH_SHORT).show();//tips
-        btLogin.setClickable(false);//避免重复请求
+    btLogin.setClickable(false);//避免重复请求
     OkHttpClient client =new OkHttpClient();
     MediaType mediaType = MediaType.get("application/json; charset=utf-8");
 
@@ -175,6 +197,7 @@ private void loginAction(){
                            Log.d("data is",data);
                            JSONObject token  =new JSONObject(data);
                            editor.putString("login_token",token.getString("token"));
+
                            editor.apply();
                            editor.commit();
                            Log.d("token is:",token.getString("token"));
