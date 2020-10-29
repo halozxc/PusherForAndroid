@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Random;
 
 import javax.xml.transform.Result;
 
@@ -30,6 +32,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class login extends AppCompatActivity {
+    public  static String USER_ACCOUNT;
     private static String servicesURL = "http://101.37.172.244:8080";
     Boolean islogin = false;
     String account ;
@@ -84,15 +87,16 @@ public class login extends AppCompatActivity {
         });
     }
     private  void registAction(){
-
+        etPassword.setInputType(InputType.TYPE_NULL);
         OkHttpClient client =new OkHttpClient();
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-
+        Random r =new Random(System.currentTimeMillis());
         JSONObject requestContent =new JSONObject();
         try {
             requestContent.put("username",etAccount.getText());
             requestContent.put("password",etPassword.getText());
-            requestContent.put("nickname","new_pusher");
+
+            requestContent.put("nickname","new_pusher"+r.nextInt());
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -119,6 +123,7 @@ public class login extends AppCompatActivity {
         });
     }
 private void loginAction(){
+    etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     Toast.makeText(login.this,"logining",Toast.LENGTH_SHORT).show();//tips
         btLogin.setClickable(false);//避免重复请求
     OkHttpClient client =new OkHttpClient();
@@ -130,6 +135,7 @@ private void loginAction(){
 //        requestContent.put("password","hjh123456");
 //        requestContent.put("nickname","haeye");
           requestContent.put("username",account);
+          USER_ACCOUNT = account;
           requestContent.put("password",password);
 
     }catch (Exception e){
@@ -179,7 +185,7 @@ private void loginAction(){
                        else{
                           Toast.makeText(login.this,reponse.getString("msg"),Toast.LENGTH_SHORT).show();
                        }
-btLogin.setClickable(true);
+                      btLogin.setClickable(true);
                     } catch (JSONException e) {
                         Toast.makeText(login.this,"oops,登录错误了",Toast.LENGTH_SHORT).show();
                         e.printStackTrace();

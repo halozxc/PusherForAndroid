@@ -18,6 +18,7 @@ import android.os.Debug;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -29,6 +30,13 @@ import java.net.URI;
 import java.sql.Time;
 import java.util.Random;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 public class PublicationImageActivity extends AppCompatActivity {
 public static final int TAKE_PHOTO =1;
 private final int REQUEST_EXTERNAL_STORAGE =1;
@@ -39,6 +47,8 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
     };
     ImageView publicImage ;
     Uri imageUri;
+    String imagePath="";
+    EditText etImageDescriptionl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,11 +69,14 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
             }
         }
         publicImage =findViewById(R.id.ivpublicationContent);
+        etImageDescriptionl =findViewById(R.id.etImageDespription);
         publicImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Random r =new Random(System.currentTimeMillis());
-                File outputImage = new File(getExternalCacheDir(),"output_images"+r.nextInt(1000)+".jpg");
+                imagePath = "output_images"+r.nextInt(1000)+".jpg";
+                        File outputImage = new File(getExternalCacheDir(),imagePath);
+
                 try{
                     if(outputImage.exists()){
 
@@ -124,5 +137,36 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
                 break;
 
         }
+    }
+    private void publicationImage(){
+
+        File outputImage = new File(getExternalCacheDir(),imagePath);
+
+        if(outputImage.exists()){
+
+            RequestBody requestBody=RequestBody.create(MediaType.parse("image/jpeg"),new File(imagePath));
+            MultipartBody body=new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)//上传图片格式一般都是这个格式MediaType.parse("multipart/form-data")
+                    .addFormDataPart("title","")
+                    .addFormDataPart("description",String.valueOf(etImageDescriptionl.getText()))
+                    .addFormDataPart("filename",imagePath,requestBody).build();//图片服务器定义名字，
+            OkHttpClient okHttpClient=new OkHttpClient();
+            Request request=new Request.Builder().url("").post(body).build();
+            try {
+                Response response=okHttpClient.newCall(request).execute();
+                if (response.isSuccessful()){
+                    System.out.println(response.body().toString());
+                }
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+
+        }
+        else{
+            Toast.makeText(this,"还没有添加照片哦",Toast.LENGTH_LONG).show();
+        }
+
+
     }
 }
