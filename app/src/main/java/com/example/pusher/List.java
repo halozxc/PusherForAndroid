@@ -4,7 +4,7 @@ package com.example.pusher;
 
 public class List {
 private  int uid;
-private String nickName;
+    private String nickName;
 
     private int goodCount;
     private String picUri;

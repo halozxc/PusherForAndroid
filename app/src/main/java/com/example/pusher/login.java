@@ -57,7 +57,7 @@ public class login extends AppCompatActivity {
          etPassword = findViewById(R.id.etPassword);
          tvRegister = findViewById(R.id.tvRegister);
         account = spfile.getString( getString(R.string.user_account),null)==null ? String.valueOf(etAccount.getText()) : spfile.getString( getString(R.string.user_account),null);
-        password = spfile.getString( getString(R.string.user_password),null)==null? String.valueOf(etPassword.getText()):spfile.getString( getString(R.string.user_password),null);
+        password = spfile.getString( getString(R.string.user_password),null)==null ? String.valueOf(etPassword.getText()) : spfile.getString( getString(R.string.user_password),null);
         token = spfile.getString( getString(R.string.login_token),null);
         etAccount.setText(account);
         etPassword.setText(password);
