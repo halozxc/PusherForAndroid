@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -18,11 +19,14 @@ import android.os.Debug;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +34,8 @@ import java.net.URI;
 import java.sql.Time;
 import java.util.Random;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -49,6 +55,9 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
     Uri imageUri;
     String imagePath="";
     EditText etImageDescriptionl;
+    Button btpublic;
+    SharedPreferences spfile;
+    String uid ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +79,7 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
         }
         publicImage =findViewById(R.id.ivpublicationContent);
         etImageDescriptionl =findViewById(R.id.etImageDespription);
+        btpublic =findViewById(R.id.btPublic);
         publicImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,6 +110,18 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
                 intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
                 startActivityForResult(intent,TAKE_PHOTO);
 
+
+            }
+        });
+        btpublic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(imageUri!=null){
+                    publicationImage();
+                }
+                else {
+                    Toast.makeText(PublicationImageActivity.this,"还没有添加图片哦",Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -139,28 +161,37 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
         }
     }
     private void publicationImage(){
-
+        spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
+        uid = spfile.getString( getString(R.string.login_token),null);
         File outputImage = new File(getExternalCacheDir(),imagePath);
 
         if(outputImage.exists()){
-
-            RequestBody requestBody=RequestBody.create(MediaType.parse("image/jpeg"),new File(imagePath));
+            Toast.makeText(PublicationImageActivity.this,"正在上传",Toast.LENGTH_SHORT).show();
+            OkHttpClient client =new OkHttpClient();
+            RequestBody requestBody=RequestBody.create(MediaType.parse("image/jpeg"),new File(imageUri.toString()));
             MultipartBody body=new MultipartBody.Builder()
                     .setType(MultipartBody.FORM)//上传图片格式一般都是这个格式MediaType.parse("multipart/form-data")
                     .addFormDataPart("title","")
                     .addFormDataPart("description",String.valueOf(etImageDescriptionl.getText()))
-                    .addFormDataPart("filename",imagePath,requestBody).build();//图片服务器定义名字，
+                    .addFormDataPart("filename","uploadimage",requestBody)
+                    .addFormDataPart("goodCount","0")
+                    .addFormDataPart("title","")
+                    .addFormDataPart("uid",uid)
+                    .build();//图片服务器定义名字，
             OkHttpClient okHttpClient=new OkHttpClient();
-            Request request=new Request.Builder().url("").post(body).build();
-            try {
-                Response response=okHttpClient.newCall(request).execute();
-                if (response.isSuccessful()){
-                    System.out.println(response.body().toString());
+            Request request=new Request.Builder().url("http://101.37.172.244:8080/pic/image").post(body).build();
+            Call call = client.newCall(request);
+            call.enqueue(new Callback() {
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+              e.printStackTrace();
                 }
-            } catch (IOException e) {
 
-                e.printStackTrace();
-            }
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+Log.d("upload result",response.body().toString());
+                }
+            });
 
         }
         else{

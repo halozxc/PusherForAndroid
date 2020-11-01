@@ -189,7 +189,7 @@ private void loginAction(){
                     editor.commit();
                     try {
                         JSONObject reponse  = new JSONObject(res);
-                        Log.d("msg is:",reponse.getString("msg"));
+                        Log.d("login msg is:",reponse.getString("msg"));
                        if(reponse.getString("msg").equals("登录成功") )
                        {  islogin = true;
 
@@ -197,7 +197,7 @@ private void loginAction(){
                            Log.d("data is",data);
                            JSONObject token  =new JSONObject(data);
                            editor.putString("login_token",token.getString("token"));
-
+                           editor.putString("user_id",token.getString("uid"));
                            editor.apply();
                            editor.commit();
                            Log.d("token is:",token.getString("token"));
