@@ -27,11 +27,14 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.sql.Time;
+import java.util.Objects;
 import java.util.Random;
 
 import okhttp3.Call;
@@ -162,20 +165,20 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
     }
     private void publicationImage(){
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
-        uid = spfile.getString( getString(R.string.login_token),null);
+        uid = spfile.getString( getString(R.string.user_id),null);
         File outputImage = new File(getExternalCacheDir(),imagePath);
 
         if(outputImage.exists()){
             Toast.makeText(PublicationImageActivity.this,"正在上传",Toast.LENGTH_SHORT).show();
             OkHttpClient client =new OkHttpClient();
-            RequestBody requestBody=RequestBody.create(MediaType.parse("image/jpeg"),new File(imageUri.toString()));
+            RequestBody requestBody=RequestBody.create(MediaType.parse("image/jpeg"),new File(getExternalCacheDir(),imagePath));
             MultipartBody body=new MultipartBody.Builder()
-                    .setType(MultipartBody.FORM)//上传图片格式一般都是这个格式MediaType.parse("multipart/form-data")
-                    .addFormDataPart("title","")
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("title","test")
                     .addFormDataPart("description",String.valueOf(etImageDescriptionl.getText()))
-                    .addFormDataPart("filename","uploadimage",requestBody)
-                    .addFormDataPart("goodCount","0")
-                    .addFormDataPart("title","")
+                    .addFormDataPart("pic","uploadimage.jpg",requestBody)
+                    .addFormDataPart("goodCount", String.valueOf(0))
+
                     .addFormDataPart("uid",uid)
                     .build();//图片服务器定义名字，
             OkHttpClient okHttpClient=new OkHttpClient();
@@ -189,7 +192,13 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-Log.d("upload result",response.body().toString());
+                    final String res = Objects.requireNonNull(response.body()).string();
+                    try {
+                        JSONObject reponse = new JSONObject(res);
+                        Log.d("upload result",reponse.toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
 
