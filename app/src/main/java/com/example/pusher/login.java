@@ -56,11 +56,10 @@ public class login extends AppCompatActivity {
          btLogin = findViewById(R.id.btLogin);
          etPassword = findViewById(R.id.etPassword);
          tvRegister = findViewById(R.id.tvRegister);
-        account = spfile.getString( getString(R.string.user_account),null)==null ? String.valueOf(etAccount.getText()) : spfile.getString( getString(R.string.user_account),null);
-        password = spfile.getString( getString(R.string.user_password),null)==null ? String.valueOf(etPassword.getText()) : spfile.getString( getString(R.string.user_password),null);
+        account = spfile.getString( getString(R.string.user_account),"null");
+        password = spfile.getString( getString(R.string.user_password),"null");
         token = spfile.getString( getString(R.string.login_token),null);
-        etAccount.setText(account);
-        etPassword.setText(password);
+
         tvRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -78,7 +77,12 @@ public class login extends AppCompatActivity {
                String actionstate = String.valueOf(btLogin.getText()) ;
                 if(actionstate.equals("登录")){
 
-
+              if(account.equals("null")){
+     account =String.valueOf( etAccount.getText());
+ }
+             if(password.equals("null")){
+     password = String.valueOf(etPassword.getText());
+ }
                     loginAction();
                 }
                 else if (actionstate.equals("注册")){
@@ -145,6 +149,7 @@ public class login extends AppCompatActivity {
         });
     }
 private void loginAction(){
+        
     etPassword.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     Toast.makeText(login.this,"logining",Toast.LENGTH_SHORT).show();//tips
     btLogin.setClickable(false);//避免重复请求

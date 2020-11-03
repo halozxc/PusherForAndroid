@@ -134,9 +134,7 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
         switch (requestCode) {
             case REQUEST_EXTERNAL_STORAGE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                    intent.putExtra(MediaStore.EXTRA_OUTPUT,imageUri);
-                    startActivityForResult(intent,TAKE_PHOTO);
+                    Toast.makeText(PublicationImageActivity.this,"申请成功",Toast.LENGTH_SHORT);
 
                 } else {
                     Toast.makeText(this, "没有权限", Toast.LENGTH_SHORT).show();
