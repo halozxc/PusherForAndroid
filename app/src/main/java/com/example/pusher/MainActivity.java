@@ -128,7 +128,7 @@ private void showlayout(java.util.List imageList ){
             RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
 
 
-            final Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/images?pageNum=1&pageSize=20").addHeader("token",token).build();
+            final Request request = new Request.Builder().url(getString(R.string.api_getpic)+"pageNum=1&pageSize=20").addHeader("token",token).build();
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
                 @Override
@@ -191,40 +191,5 @@ private void showlayout(java.util.List imageList ){
     }
 
     //
-    void registeUserInfo(){
 
-        OkHttpClient client =new OkHttpClient();
-        MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-
-        JSONObject requestContent =new JSONObject();
-        try {
-            requestContent.put("username","824927872@qq.com");
-            requestContent.put("password","hjh123456");
-            requestContent.put("nickname","haeye");
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
-        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/register").post(requestBody).build();
-        Call call = client.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                Log.d("failure","failure");
-            }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                final String res = Objects.requireNonNull(response.body()).string();
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Log.d("requestresult",res);
-                    }
-                });
-            }
-        });
-
-    }
 }

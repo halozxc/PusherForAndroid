@@ -57,7 +57,7 @@ ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
         final String[] nickname = new String[1];
         OkHttpClient client =new OkHttpClient();
         MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/admin/"+galleryItem.getUid()).build();
+        Request request = new Request.Builder().url(activity.getString(R.string.api_get_user_info).toString() +galleryItem.getUid()).build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -94,7 +94,7 @@ ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
      holder.accountText.setText( galleryItem.getNickName());
      holder.descriptionText.setText(galleryItem.getDescription());
 
-     Glide.with(activity).load("http://101.37.172.244:8099/zxm/"+galleryItem.getPicUri()).error(Glide.with(activity).load(R.drawable.ic_default)).into(holder.contentImage);
+     Glide.with(activity).load(activity.getString(R.string.api_image_address).toString()+galleryItem.getPicUri()).error(Glide.with(activity).load(R.drawable.ic_default)).into(holder.contentImage);
      Glide.with(activity).load(galleryItem.getGoodCount() >0 ? R.mipmap.favorite_fill :R.mipmap.favorite).into(holder.favoriteImage);
 
     }

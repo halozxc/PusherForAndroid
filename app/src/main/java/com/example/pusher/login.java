@@ -104,7 +104,7 @@ public class login extends AppCompatActivity {
             e.printStackTrace();
         }
         RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
-        Request request = new Request.Builder().url("http://101.37.172.244:8080/pic/register").post(requestBody).build();
+        Request request = new Request.Builder().url(getString(R.string.api_register)).post(requestBody).build();
         Call call = client.newCall(request);
         call.enqueue(new Callback() {
             @Override
@@ -164,7 +164,7 @@ private void loginAction(){
         e.printStackTrace();
     }
     RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
-    final Request request = new Request.Builder().url(servicesURL+"/pic/login").post(requestBody).build();
+    final Request request = new Request.Builder().url(getString(R.string.api_login)).post(requestBody).build();
 
     Call call = client.newCall(request);
     call.enqueue(new Callback() {

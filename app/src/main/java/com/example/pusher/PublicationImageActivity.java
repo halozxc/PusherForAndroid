@@ -182,7 +182,7 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
                     .addFormDataPart("uid",uid)
                     .build();//图片服务器定义名字，
             OkHttpClient okHttpClient=new OkHttpClient();
-            Request request=new Request.Builder().url("http://101.37.172.244:8080/pic/image").post(body).build();
+            Request request=new Request.Builder().url(getString(R.string.api_uploadpic)).post(body).build();
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
                 @Override
