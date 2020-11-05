@@ -13,4 +13,6 @@
 <string name="api_login">"http://101.37.172.244:8080/pic/login"</string>
     <string name="api_getpic">"http://101.37.172.244:8080/pic/images?"</string>
     <string name="api_uploadpic">"http://101.37.172.244:8080/pic/image"</string>
+    <string name="api_getisfavorite">"http://101.37.172.244:8080/pic/image/"</string>
+    <integer name="gallery_size_per_page">5</integer>
 </resources>

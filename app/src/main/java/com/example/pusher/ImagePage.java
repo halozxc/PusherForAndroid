@@ -22,7 +22,7 @@ public class ImagePage {
         return msg;
     }
 
-    public void setData(Data data) {
+    public void setData(com.example.pusher.Data data) {
         this.data = data;
     }
     public Data getData() {

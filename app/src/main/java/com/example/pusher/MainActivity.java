@@ -3,9 +3,12 @@ package com.example.pusher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ViewUtils;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.MergeAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -45,6 +48,13 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences spfile;
     RecyclerView rvImageGallery ;
     FloatingActionButton publicationNewImage ;
+    int pageSize ;
+    int pageTotalCount=0;//总页数
+    int pageNavigationCount=0;//导航页
+    int nextPageNum=1;
+    private int lastPosition = 0;//位置
+    private int lastOffset = 0;//偏移量
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +64,9 @@ public class MainActivity extends AppCompatActivity {
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
         token = spfile.getString( getString(R.string.login_token),null);
 
-publicationNewImage =findViewById(R.id.fabPublicNewImage);
+        pageSize = Integer.parseInt(getString(R.integer.gallery_size_per_page));//每一页5张图
+
+        publicationNewImage =findViewById(R.id.fabPublicNewImage);
 
         if(token==null)
         {
@@ -66,14 +78,67 @@ publicationNewImage =findViewById(R.id.fabPublicNewImage);
         }
 
          loadmenubackground();//bing image everyday
-publicationNewImage.setOnClickListener(new View.OnClickListener() {
+          publicationNewImage.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View view) {
+
         Intent intent =new Intent(MainActivity.this,PublicationImageActivity.class);
         startActivity(intent);
     }
 });
+        rvImageGallery.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            boolean isSlidingToLast = false;
+
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                //设置什么布局管理器,就获取什么的布局管理器
+
+                LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                try{ View topView = manager.getChildAt(0); //获取可视的第一个view
+                    lastOffset = topView.getTop(); //获取与该view的顶部的偏移量
+                    lastPosition = manager.getPosition(topView);  //得到该View的数组位置
+                }
+                catch (Exception e){
+                    e.printStackTrace();
+                }
+
+                // 当停止滑动时
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    //获取最后一个完全显示的ItemPosition ,角标值
+                    int lastVisibleItem = manager.findLastCompletelyVisibleItemPosition();
+                    //所有条目,数量值
+                    int totalItemCount = manager.getItemCount();
+
+                    // 判断是否滚动到底部，并且是向右滚动
+                    if (lastVisibleItem == (totalItemCount - 1) && isSlidingToLast) {
+                        //加载更多功能的代码
+                       if(nextPageNum!=0){Toast.makeText(MainActivity.this,"正在拼命加载",Toast.LENGTH_SHORT).show();
+                           getImageList();}
+                       else if(nextPageNum==0){
+                           Toast.makeText(MainActivity.this,"精彩见底了，返回刷新试试吧",Toast.LENGTH_SHORT).show();
+                       }
+
+                    }
+                }
+            }
+
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                //dx用来判断横向滑动方向，dy用来判断纵向滑动方向
+                //dx>0:向右滑动,dx<0:向下滑动
+                //dy>0:向下滑动,dy<0:向上滑动
+                Log.d("scrolling","dy");
+                if (dy > 0) {
+                    isSlidingToLast = true;
+                } else {
+                    isSlidingToLast = false;
+                }
+            }
+        });
     }
+
     void loadmenubackground(){
         final ImageView bgImageView = findViewById(R.id.menu_background);
         String requestBingpic ="http:guolin.tech/api/bing_pic";
@@ -111,24 +176,26 @@ publicationNewImage.setOnClickListener(new View.OnClickListener() {
 private void showlayout(java.util.List imageList ){
 
         rvImageGallery.setLayoutManager(new LinearLayoutManager(this));
-        rvImageGallery.setAdapter(new ImageGalleryAdapter(imageList,MainActivity.this));
+        if(pageTotalCount<2)
+        {
+            rvImageGallery.setAdapter(new ImageGalleryAdapter(imageList,MainActivity.this));
+        }
+        else{
+            MergeAdapter  mergeAdapter = new MergeAdapter(rvImageGallery.getAdapter(),new ImageGalleryAdapter(imageList,MainActivity.this));
+            rvImageGallery.setAdapter(mergeAdapter);
+            ((LinearLayoutManager)rvImageGallery.getLayoutManager()) .scrollToPositionWithOffset(lastPosition, lastOffset);
+        }
+
+
 }
     private void getImageList(){
         if(token!=null){
             OkHttpClient client =new OkHttpClient();
             MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-            JSONObject requestContent =new JSONObject();
-            try {
-                requestContent.put("pageNum",1);
-                requestContent.put("pageSize",15);
-
-            }catch (Exception e){
-                e.printStackTrace();
-            }
-            RequestBody requestBody = RequestBody.create(mediaType,requestContent.toString());
 
 
-            final Request request = new Request.Builder().url(getString(R.string.api_getpic)+"pageNum=1&pageSize=20").addHeader("token",token).build();
+
+            final Request request = new Request.Builder().url(getString(R.string.api_getpic)+"pageNum="+nextPageNum+"&pageSize="+pageSize).addHeader("token",token).build();
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
                 @Override
@@ -140,9 +207,11 @@ private void showlayout(java.util.List imageList ){
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     final String res = Objects.requireNonNull(response.body()).string();
 
-                    Gson gson = new Gson();
+                    final Gson gson = new Gson();
                    final  com.example.pusher.ImagePage imagePage = gson.fromJson(res,com.example.pusher.ImagePage.class);
-
+                    com.example.pusher.Data pageinfo =imagePage.getData();
+                    nextPageNum = pageinfo.getNextPage();
+                    Log.d("nextPage:",String.valueOf(nextPageNum));
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -151,7 +220,10 @@ private void showlayout(java.util.List imageList ){
                            if(imagePage.getMsg().equals("token失效，请重新登录"))
                            {intentLogin();
                            return;}
-                           else if(imagePage.getMsg().equals("显示成功")){try{showlayout(imagePage.getData().getList());
+                           else if(imagePage.getMsg().equals("显示成功")){try{
+if(nextPageNum!=0){  pageTotalCount++;
+    showlayout(imagePage.getData().getList());}
+
                            }
                            catch (Exception e)
                            {

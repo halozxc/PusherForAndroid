@@ -81,6 +81,14 @@ android:clickable="true"
 
 
                    android:padding="3dp" />
+               <TextView
+                   android:id="@+id/tvGoodCount"
+                   android:layout_height="match_parent"
+                   android:layout_width="wrap_content"
+                   android:textColor="#dd1166"
+                   android:paddingStart="10dp"
+
+                   />
 
 
            </LinearLayout>

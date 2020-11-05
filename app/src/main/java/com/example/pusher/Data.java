@@ -4,12 +4,7 @@
 package com.example.pusher;
 import java.util.List;
 
-/**
- * Auto-generated: 2020-10-26 9:43:41
- *
- * @author bejson.com (i@bejson.com)
- * @website http://www.bejson.com/java2pojo/
- */
+
 public class Data {
 
     private int startRow;
