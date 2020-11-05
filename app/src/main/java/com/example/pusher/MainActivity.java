@@ -126,9 +126,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                //dx用来判断横向滑动方向，dy用来判断纵向滑动方向
-                //dx>0:向右滑动,dx<0:向下滑动
-                //dy>0:向下滑动,dy<0:向上滑动
+
                 Log.d("scrolling","dy");
                 if (dy > 0) {
                     isSlidingToLast = true;
