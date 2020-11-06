@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     SharedPreferences spfile;
     RecyclerView rvImageGallery ;
     FloatingActionButton publicationNewImage ;
+    FloatingActionButton fabLogOut;
     int pageSize ;
     int pageTotalCount=0;//总页数
     int pageNavigationCount=0;//导航页
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         rvImageGallery = findViewById(R.id.rvImageGallery);
+        fabLogOut = findViewById(R.id.fabLogOut);
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
         token = spfile.getString( getString(R.string.login_token),null);
 
@@ -135,6 +137,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    fabLogOut.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            intentLogin();
+        }
+    });
     }
 
     void loadmenubackground(){

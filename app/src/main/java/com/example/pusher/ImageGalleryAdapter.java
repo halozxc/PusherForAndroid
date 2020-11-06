@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,8 +60,17 @@ ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
      com.example.pusher.List galleryItem = galleryItemList.get(position);
+
+        holder.favoriteImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                holder.isfavorite = holder.isfavorite==true ? false:true;
+                Glide.with(activity).load(holder.isfavorite? R.mipmap.favorite_fill  : R.mipmap.favorite).into(holder.favoriteImage);
+                   changeFavoriteState(holder,position);
+            }
+        });
         holder.accountText.setText( galleryItem.getNickName());
         holder.descriptionText.setText(galleryItem.getDescription());
         holder.goodcountText.setText(galleryItem.getGoodCount()>0 ?  galleryItem.getGoodCount()+"人感觉很赞" : "");
@@ -84,14 +94,16 @@ ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
          ImageView favoriteImage;
          TextView descriptionText;
          TextView goodcountText;
+         Boolean isfavorite;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            isfavorite =false;
             potraitImage =(ImageView) itemView.findViewById(R.id.imPortrait);
             contentImage  =(ImageView)itemView.findViewById(R.id.imContent);
             accountText=  (TextView)itemView.findViewById(R.id.tvUsername);
             favoriteImage =(ImageView) itemView.findViewById(R.id.imFavorite);
             descriptionText =(TextView)itemView.findViewById(R.id.tvDesription);
-goodcountText =(TextView)itemView.findViewById(R.id.tvGoodCount);
+            goodcountText =(TextView)itemView.findViewById(R.id.tvGoodCount);
         }
     }
 void syncUserInfo(final ViewHolder holder, int position){
@@ -144,14 +156,16 @@ void syncUserInfo(final ViewHolder holder, int position){
     @Override
     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
         final String res = Objects.requireNonNull(response.body()).string();
+
         try {
             Log.d("favorite is",res);
             JSONObject favorite = new JSONObject(res);
-            final int is = favorite.getInt("data");
+            final String is = favorite.getString("data");
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Glide.with(activity).load(is==1 ? R.mipmap.favorite_fill :R.mipmap.favorite).into(holder.favoriteImage);
+                    holder.isfavorite = (is.equals(1)) ? true:false;
+                    Glide.with(activity).load(is.equals(1) ? R.mipmap.favorite_fill :R.mipmap.favorite).into(holder.favoriteImage);
                 }
             });
 
@@ -168,13 +182,46 @@ void syncUserInfo(final ViewHolder holder, int position){
 
 
 }
+void changeFavoriteState(final ViewHolder holder, final int position){
+    com.example.pusher.List galleryItem = galleryItemList.get(position);
+    OkHttpClient client =new OkHttpClient();
+    MediaType mediaType = MediaType.get("application/json; charset=utf-8");
+    JSONObject body =new JSONObject();
+    try {
+        body.put("picId",galleryItem.getPicId());
+        body.put("userId",spfile.getString("user_id","0"));
+        body.put("status",holder.isfavorite ? "1":"0");
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+    RequestBody requestBody = RequestBody.create(mediaType,body.toString());
+    Request request = new Request.Builder().url(activity.getString(R.string.api_setisfavorite)).post(requestBody).build();
+    Call call =client.newCall(request);
+    call.enqueue(new Callback() {
+        @Override
+        public void onFailure(@NotNull Call call, @NotNull IOException e) {
+
+        }
+
+        @Override
+        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
+            final String res = Objects.requireNonNull(response.body()).string();
+            try {
+                final JSONObject body = new JSONObject(res);
+               final String msg = body.getString("msg");
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+Toast.makeText(activity,msg,Toast.LENGTH_SHORT).show();
+syncUserInfo(holder,position);
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+    });
 }
-//class GalleryItem{
-//    int imageItemNUm;
-//    boolean isfavorite;
-//    String userName;
-//    String imageURl;
-//    String userPortraitURL;
-//
-//
-//}
+}

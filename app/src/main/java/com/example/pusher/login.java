@@ -202,7 +202,8 @@ private void loginAction(){
                            Log.d("data is",data);
                            JSONObject token  =new JSONObject(data);
                            editor.putString("login_token",token.getString("token"));
-                           editor.putString("user_id",token.getString("uid"));
+                           editor.putString("user_id", String.valueOf(token.getInt("uid")));
+                           Log.d("uid is:" , String.valueOf(token.getInt("uid")));
                            editor.apply();
                            editor.commit();
                            Log.d("token is:",token.getString("token"));
