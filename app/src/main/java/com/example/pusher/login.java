@@ -185,9 +185,9 @@ private void loginAction(){
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    btLogin.setClickable(true);
-                    Log.d("requestresult",res);
-                   editor = spfile.edit();
+                     btLogin.setClickable(true);
+                     Log.d("requestresult",res);
+                     editor = spfile.edit();
                     editor.putString(getString(R.string.user_account), String.valueOf(etAccount.getText()));
                     editor.putString(getString(R.string.user_password), String.valueOf(etPassword.getText()));
                     editor.apply();
@@ -202,11 +202,12 @@ private void loginAction(){
                            Log.d("data is",data);
                            JSONObject token  =new JSONObject(data);
                            editor.putString("login_token",token.getString("token"));
-                           editor.putString("user_id", String.valueOf(token.getInt("uid")));
-                           Log.d("uid is:" , String.valueOf(token.getInt("uid")));
+                           editor.putString("user_id", token.getString("uid"));
+
                            editor.apply();
                            editor.commit();
-                           Log.d("token is:",token.getString("token"));
+
+Log.d("user_id is:",spfile.getString("user_id",""));
                            Intent intent =new Intent();
                            setResult(RESULT_OK);
                            finish();

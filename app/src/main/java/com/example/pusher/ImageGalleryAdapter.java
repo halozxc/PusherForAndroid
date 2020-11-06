@@ -47,13 +47,14 @@ Activity activity;
 ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
     galleryItemList = items;
     this.activity =activity;
+    spfile = activity.getSharedPreferences(activity.getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
 }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_gallery_item,parent,false);
         ViewHolder holder = new ViewHolder(view);
-        spfile = activity.getSharedPreferences(activity.getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
+
 
 
        return holder;
@@ -110,6 +111,7 @@ void syncUserInfo(final ViewHolder holder, int position){
     com.example.pusher.List galleryItem = galleryItemList.get(position);
     final String[] nickname = new String[1];
     OkHttpClient client =new OkHttpClient();
+    OkHttpClient client1 =new OkHttpClient();
     MediaType mediaType = MediaType.get("application/json; charset=utf-8");
     Request request = new Request.Builder().url(activity.getString(R.string.api_get_user_info) +galleryItem.getUid()).build();
     Call call = client.newCall(request);
@@ -145,9 +147,9 @@ void syncUserInfo(final ViewHolder holder, int position){
         }
     });
 
-    request =new Request.Builder().url(activity.getString(R.string.api_getisfavorite)+galleryItem.getPicId()+"/"+spfile.getString("user_id",null)).build();
-    call = client.newCall(request);
-    call.enqueue(new Callback() {
+    Request request1 = new Request.Builder().url(activity.getString(R.string.api_getisfavorite) + galleryItem.getPicId() + "/" + spfile.getString("user_id", null)).build();
+    Call call1 = client1.newCall(request1);
+    call1.enqueue(new Callback() {
     @Override
     public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
@@ -158,7 +160,7 @@ void syncUserInfo(final ViewHolder holder, int position){
         final String res = Objects.requireNonNull(response.body()).string();
 
         try {
-            Log.d("favorite is",res);
+            Log.d("get fav status:",res);
             JSONObject favorite = new JSONObject(res);
             final String is = favorite.getString("data");
             activity.runOnUiThread(new Runnable() {
@@ -188,9 +190,10 @@ void changeFavoriteState(final ViewHolder holder, final int position){
     MediaType mediaType = MediaType.get("application/json; charset=utf-8");
     JSONObject body =new JSONObject();
     try {
-        body.put("picId",galleryItem.getPicId());
-        body.put("userId",spfile.getString("user_id","0"));
-        body.put("status",holder.isfavorite ? "1":"0");
+        body.put("picId", galleryItem.getPicId());
+        body.put("userId",spfile.getString("user_id","") );
+        body.put("status",Byte.valueOf((byte) (holder.isfavorite ? 1:0)));
+        Log.d("post body is",body.toString());
     } catch (JSONException e) {
         e.printStackTrace();
     }
@@ -206,13 +209,14 @@ void changeFavoriteState(final ViewHolder holder, final int position){
         @Override
         public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
             final String res = Objects.requireNonNull(response.body()).string();
+            Log.d("tapgood result",res);
             try {
                 final JSONObject body = new JSONObject(res);
                final String msg = body.getString("msg");
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-Toast.makeText(activity,msg,Toast.LENGTH_SHORT).show();
+             Toast.makeText(activity,msg,Toast.LENGTH_SHORT).show();
 syncUserInfo(holder,position);
                     }
                 });
