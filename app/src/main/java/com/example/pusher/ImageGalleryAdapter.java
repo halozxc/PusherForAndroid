@@ -67,12 +67,12 @@ ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
         holder.favoriteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                holder.isfavorite = holder.isfavorite==true ? false:true;
+                holder.isfavorite = holder.isfavorite ? false:true;
                 Glide.with(activity).load(holder.isfavorite? R.mipmap.favorite_fill  : R.mipmap.favorite).into(holder.favoriteImage);
                    changeFavoriteState(holder,position);
             }
         });
-        holder.accountText.setText( galleryItem.getNickName());
+        holder.accountText.setText(galleryItem.getNickName());
         holder.descriptionText.setText(galleryItem.getDescription());
         holder.goodcountText.setText(galleryItem.getGoodCount()>0 ?  galleryItem.getGoodCount()+"人感觉很赞" : "");
         Glide.with(activity).load(activity.getString(R.string.api_image_address).toString()+galleryItem.getPicUri()).error(Glide.with(activity).load(R.drawable.ic_default)).into(holder.contentImage);
@@ -114,6 +114,7 @@ void syncUserInfo(final ViewHolder holder, int position){
     OkHttpClient client1 =new OkHttpClient();
     MediaType mediaType = MediaType.get("application/json; charset=utf-8");
     Request request = new Request.Builder().url(activity.getString(R.string.api_get_user_info) +galleryItem.getUid()).build();
+
     Call call = client.newCall(request);
     call.enqueue(new Callback() {
         @Override
@@ -148,6 +149,7 @@ void syncUserInfo(final ViewHolder holder, int position){
     });
 
     Request request1 = new Request.Builder().url(activity.getString(R.string.api_getisfavorite) + galleryItem.getPicId() + "/" + spfile.getString("user_id", null)).build();
+
     Call call1 = client1.newCall(request1);
     call1.enqueue(new Callback() {
     @Override
@@ -163,11 +165,13 @@ void syncUserInfo(final ViewHolder holder, int position){
             Log.d("get fav status:",res);
             JSONObject favorite = new JSONObject(res);
             final String is = favorite.getString("data");
+
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    holder.isfavorite = (is.equals(1)) ? true:false;
-                    Glide.with(activity).load(is.equals(1) ? R.mipmap.favorite_fill :R.mipmap.favorite).into(holder.favoriteImage);
+                    holder.isfavorite = is.equals("1");
+                    Log.d("fav data bool is", String.valueOf(holder.isfavorite));
+                    Glide.with(activity).load(holder.isfavorite ? R.mipmap.favorite_fill : R.mipmap.favorite).into(holder.favoriteImage);
                 }
             });
 
@@ -217,7 +221,7 @@ void changeFavoriteState(final ViewHolder holder, final int position){
                     @Override
                     public void run() {
              Toast.makeText(activity,msg,Toast.LENGTH_SHORT).show();
-syncUserInfo(holder,position);
+//syncUserInfo(holder,position);
                     }
                 });
             } catch (JSONException e) {

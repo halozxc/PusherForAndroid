@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.MergeAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -15,6 +17,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -44,17 +48,28 @@ import okhttp3.Response;
 import okio.BufferedSink;
 
 public class MainActivity extends AppCompatActivity {
+    private static int PAGE_EXPLORE=1;
+    private static int PAGE_PUBLISH =2;
+    private static int PAGE_COLLECTION =3;
+    private int selectedPage[] ={1,0,0};
     String token;
     SharedPreferences spfile;
     RecyclerView rvImageGallery ;
     FloatingActionButton publicationNewImage ;
     FloatingActionButton fabLogOut;
+    ImageView ivExplore;
+    ImageView ivPublish;
+    ImageView ivCollection;
     int pageSize ;
     int pageTotalCount=0;//总页数
     int pageNavigationCount=0;//导航页
     int nextPageNum=1;
     private int lastPosition = 0;//位置
     private int lastOffset = 0;//偏移量
+    private float selectedPos=0.25f;//别问我为什么是0.25，我不想解释
+    private float targetPos = 0.25f;
+    private tabBarShape tbsNavigationItem;
+
     @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +77,18 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         rvImageGallery = findViewById(R.id.rvImageGallery);
+        ivExplore =findViewById(R.id.ivExplore);
+        ivPublish =findViewById(R.id.ivPublication);
+        ivCollection =findViewById(R.id.ivCollection);
         fabLogOut = findViewById(R.id.fabLogOut);
+        tbsNavigationItem =findViewById(R.id.tbsNavigationItem);
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
         token = spfile.getString( getString(R.string.login_token),null);
 
         pageSize = Integer.parseInt(getString(R.integer.gallery_size_per_page));//每一页5张图
 
         publicationNewImage =findViewById(R.id.fabPublicNewImage);
-
+initNavigationBar();
         if(token==null)
         {
             intentLogin();
@@ -141,6 +160,24 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View view) {
             intentLogin();
+        }
+    });
+    ivExplore.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            highlightNavigationBarItem(0,ivExplore);
+        }
+    });
+    ivCollection.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            highlightNavigationBarItem(2,ivCollection);
+        }
+    });
+    ivPublish.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            highlightNavigationBarItem(1,ivPublish);
         }
     });
     }
@@ -251,6 +288,7 @@ if(nextPageNum!=0){  pageTotalCount++;
 
         startActivityForResult(intent,1);
 
+
     }
 
     @Override
@@ -267,7 +305,120 @@ if(nextPageNum!=0){  pageTotalCount++;
                 break;
         }
     }
+public void highlightNavigationBarItem(int item,View selectedView){
+   ImageView animatorview =null;
+targetPos = (item+1)*0.25f;
+        if(selectedPage[item]==1){
+            return;
+        }
+        else{
+            for(int i=0;i<selectedPage.length;i++){
+            if(selectedPage[i]==1){
+                selectedPage[i]=0;
+                switch (i){
+                    case 0:
+                        animatorview =  ivExplore;
 
-    //
+                        break;
+
+
+                    case 1:
+
+                        animatorview = ivPublish;
+
+
+                        break;
+
+
+                    case 2:
+                        animatorview = ivCollection;
+
+                        break;
+
+                }
+            }
+
+            }
+
+            selectedPage[item]=1;
+        unHighlightNavigetionAnimation(animatorview);
+        highlightNavigationItemAnimation(selectedView);
+        }
+
+}
+public void highlightNavigationItemAnimation(View view){
+
+    final View animationView = view;
+    ValueAnimator animator = ValueAnimator.ofFloat(0,-70);
+    final View finalAnimatorview = view;
+    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            animationView.setTranslationY((Float) animation.getAnimatedValue());
+        }
+    });
+    animator.setDuration(200);
+    animator.setInterpolator(new AccelerateDecelerateInterpolator());
+    animator.start();
+    ValueAnimator animator1 = ValueAnimator.ofFloat(selectedPos,targetPos);
+
+
+    animator1.setInterpolator(new AccelerateDecelerateInterpolator());
+    animator1.setDuration(200);//播放时长
+    animator1.setCurrentFraction(0.01f);
+    animator1.setRepeatCount(0);//重放次数
+    animator1.setRepeatMode(ValueAnimator.REVERSE);
+    animator1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            //获取改变后的值
+
+            tbsNavigationItem.rpos  =  (float) animation.getAnimatedValue();
+            tbsNavigationItem.postInvalidate();
+        }
+    });
+    animator1.addListener(new Animator.AnimatorListener() {
+        @Override
+        public void onAnimationStart(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationEnd(Animator animation) {
+selectedPos =targetPos;
+        }
+
+        @Override
+        public void onAnimationCancel(Animator animation) {
+
+        }
+
+        @Override
+        public void onAnimationRepeat(Animator animation) {
+
+        }
+    });
+    animator1.start();
+
+
+}
+public void unHighlightNavigetionAnimation(View view){
+    final View animationView = view;
+    ValueAnimator animator = ValueAnimator.ofFloat(-70,0);
+    final View finalAnimatorview = view;
+    animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+        @Override
+        public void onAnimationUpdate(ValueAnimator animation) {
+            animationView.setTranslationY((Float) animation.getAnimatedValue());
+        }
+    });
+
+    animator.setDuration(200);
+    animator.setInterpolator(new LinearInterpolator());
+    animator.start();
+}
+    public void initNavigationBar(){
+highlightNavigationItemAnimation(ivExplore);
+    }
 
 }

@@ -4,44 +4,132 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android">
-   <androidx.constraintlayout.widget.ConstraintLayout
-       android:layout_width="match_parent"
-       android:layout_height="match_parent">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-       <androidx.recyclerview.widget.RecyclerView
-           android:id="@+id/rvImageGallery"
-           android:layout_width="match_parent"
-           android:layout_height="match_parent"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/tbTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@color/colorPrimary">
+<TextView
 
-           app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:layout_constraintHorizontal_bias="1.0"
-           app:layout_constraintStart_toStartOf="parent"
-           app:layout_constraintTop_toTopOf="parent"
-           app:layout_constraintVertical_bias="0.0" />
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:textSize="28dp"
+    android:textColor="#FFFFFF"
+    android:text="发现"/>
+        </androidx.appcompat.widget.Toolbar>
 
-       <com.google.android.material.floatingactionbutton.FloatingActionButton
-           android:id="@+id/fabPublicNewImage"
-           android:layout_width="wrap_content"
-           android:layout_height="wrap_content"
-           android:layout_marginEnd="16dp"
-           android:layout_marginBottom="24dp"
-           android:clickable="true"
-           app:layout_constraintBottom_toBottomOf="parent"
-           app:layout_constraintEnd_toEndOf="parent"
-           app:srcCompat="@mipmap/plus" />
-   </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvImageGallery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+android:layout_marginBottom="50dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tbTitle"
+
+            app:layout_constraintVertical_bias="0.0" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fabPublicNewImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:clickable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/rvImageGallery"
+            app:srcCompat="@mipmap/plus" />
+
+        <com.example.pusher.tabBarShape
+            android:id="@+id/tbsNavigationItem"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:elevation="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginBottom="5dp"
+            android:elevation="6dp"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:paddingHorizontal="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/ivExplore"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@mipmap/explore" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/ivPublication"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@mipmap/plus"
+                android:scaleType="centerInside" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <ImageView
+                android:id="@+id/ivCollection"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:background="@mipmap/collection" />
+
+            <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="left"
+
         android:background="@drawable/menubackground">
 
-       <include layout="@layout/layout_menu"
-           android:layout_height="match_parent"
-           android:layout_width="match_parent"/>
+        <include
+            layout="@layout/layout_menu"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="51dp"
+            tools:layout_editor_absoluteY="49dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.drawerlayout.widget.DrawerLayout>
