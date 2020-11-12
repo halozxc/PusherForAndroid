@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         int pageTotalCount=0;//总页数
 
         int nextPageNum=1;
-        
+
         RecycleViewContentNavigation(){
             pageSize=1;
             pageTotalCount=0;
