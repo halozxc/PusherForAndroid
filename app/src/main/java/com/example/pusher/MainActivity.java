@@ -22,6 +22,7 @@ import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -31,6 +32,7 @@ import com.google.gson.Gson;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -57,9 +59,12 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rvImageGallery ;
     FloatingActionButton publicationNewImage ;
     FloatingActionButton fabLogOut;
-    View ivExplore;
-    View ivPublish;
-    View ivCollection;
+    View llExplore;
+    View llPublish;
+    View llCollection;
+    TextView tvExplore;
+    TextView tvPublish;
+    TextView tvColection;
     int pageSize ;
     int pageTotalCount=0;//总页数
     int pageNavigationCount=0;//导航页
@@ -77,9 +82,12 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
         rvImageGallery = findViewById(R.id.rvImageGallery);
-        ivExplore =findViewById(R.id.ivExplore);
-        ivPublish =findViewById(R.id.ivPublication);
-        ivCollection =findViewById(R.id.ivCollection);
+        llExplore =findViewById(R.id.llExplore);
+        llPublish =findViewById(R.id.llPublication);
+        llCollection =findViewById(R.id.llCollection);
+        tvExplore = findViewById(R.id.tvExplore);
+        tvPublish =findViewById(R.id.tvPublication);
+        tvColection =findViewById(R.id.tvCollection);
         fabLogOut = findViewById(R.id.fabLogOut);
         tbsNavigationItem =findViewById(R.id.tbsNavigationItem);
         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
@@ -162,22 +170,22 @@ initNavigationBar();
             intentLogin();
         }
     });
-    ivExplore.setOnClickListener(new View.OnClickListener() {
+    llExplore.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            highlightNavigationBarItem(0,ivExplore);
+            highlightNavigationBarItem(0,llExplore);
         }
     });
-    ivCollection.setOnClickListener(new View.OnClickListener() {
+    llCollection.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            highlightNavigationBarItem(2,ivCollection);
+            highlightNavigationBarItem(2,llCollection);
         }
     });
-    ivPublish.setOnClickListener(new View.OnClickListener() {
+    llPublish.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            highlightNavigationBarItem(1,ivPublish);
+            highlightNavigationBarItem(1,llPublish);
         }
     });
     }
@@ -307,6 +315,7 @@ if(nextPageNum!=0){  pageTotalCount++;
     }
 public void highlightNavigationBarItem(int item,View selectedView){
    View animatorview =null;
+   TextView text=null;
 targetPos = (item+1)*0.25f;
         if(selectedPage[item]==1){
             return;
@@ -317,22 +326,24 @@ targetPos = (item+1)*0.25f;
                 selectedPage[i]=0;
                 switch (i){
                     case 0:
-                        animatorview =  ivExplore;
-
+                        animatorview =  llExplore;
+text=tvExplore;
+tvExplore.setText("发现");
                         break;
 
 
                     case 1:
 
-                        animatorview = ivPublish;
+                        animatorview = llPublish;
 
-
+tvPublish.setText("发布");
                         break;
 
 
                     case 2:
-                        animatorview = ivCollection;
+                        animatorview = llCollection;
 
+tvColection.setText("收藏");
                         break;
 
                 }
@@ -342,14 +353,21 @@ targetPos = (item+1)*0.25f;
 
             selectedPage[item]=1;
         unHighlightNavigetionAnimation(animatorview);
-        highlightNavigationItemAnimation(selectedView);
+            if (llExplore.equals(selectedView)) {
+                text = tvExplore;
+            } else if (llPublish.equals(selectedView)) {
+                text = tvPublish;
+            } else if (llCollection.equals(selectedView)) {
+                text = tvColection;
+            }
+        highlightNavigationItemAnimation(selectedView,text);
         }
 
 }
-public void highlightNavigationItemAnimation(View view){
-
+public void highlightNavigationItemAnimation(View view, TextView text){
+text.setText(null);
     final View animationView = view;
-    ValueAnimator animator = ValueAnimator.ofFloat(0,-70);
+    ValueAnimator animator = ValueAnimator.ofFloat(0,-50);
     final View finalAnimatorview = view;
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
         @Override
@@ -404,7 +422,7 @@ selectedPos =targetPos;
 }
 public void unHighlightNavigetionAnimation(View view){
     final View animationView = view;
-    ValueAnimator animator = ValueAnimator.ofFloat(-70,0);
+    ValueAnimator animator = ValueAnimator.ofFloat(-50,0);
     final View finalAnimatorview = view;
     animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
         @Override
@@ -418,7 +436,7 @@ public void unHighlightNavigetionAnimation(View view){
     animator.start();
 }
     public void initNavigationBar(){
-highlightNavigationItemAnimation(ivExplore);
+highlightNavigationItemAnimation(llExplore,tvExplore);//默认选中左边第一个
     }
 
 }

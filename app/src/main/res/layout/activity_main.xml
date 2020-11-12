@@ -69,7 +69,7 @@ android:layout_marginBottom="50dp"
             android:elevation="6dp"
             android:gravity="bottom"
             android:orientation="horizontal"
-            android:paddingHorizontal="18dp"
+            android:paddingHorizontal="15dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -80,7 +80,7 @@ android:layout_marginBottom="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 <LinearLayout
-    android:id="@+id/ivExplore"
+    android:id="@+id/llExplore"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -89,7 +89,9 @@ android:layout_marginBottom="50dp"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:background="@mipmap/explore" />
-    <TextView android:layout_height="wrap_content"
+    <TextView
+        android:id="@+id/tvExplore"
+        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:text="发现"
         android:textSize="10dp"
@@ -107,14 +109,16 @@ android:layout_marginBottom="50dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:id="@+id/ivPublication">
+                android:id="@+id/llPublication">
                 <ImageView
 
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@mipmap/plus"
                     android:scaleType="centerInside" />
-                <TextView android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/tvPublication"
+                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="发布"
                     android:textSize="10dp"
@@ -128,7 +132,7 @@ android:layout_marginBottom="50dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
             <LinearLayout
-                android:id="@+id/ivCollection"
+                android:id="@+id/llCollection"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -137,7 +141,9 @@ android:layout_marginBottom="50dp"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:background="@mipmap/collection" />
-                <TextView android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/tvCollection"
+                    android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
                     android:text="喜爱"
                     android:textSize="10dp"
