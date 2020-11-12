@@ -50,9 +50,26 @@ import okhttp3.Response;
 import okio.BufferedSink;
 
 public class MainActivity extends AppCompatActivity {
-    private static int PAGE_EXPLORE=1;
-    private static int PAGE_PUBLISH =2;
-    private static int PAGE_COLLECTION =3;
+    class RecycleViewContentNavigation{
+        int pageSize ;
+        int pageTotalCount=0;//总页数
+
+        int nextPageNum=1;
+        
+        RecycleViewContentNavigation(){
+            pageSize=1;
+            pageTotalCount=0;
+            nextPageNum =1;
+        }
+        RecycleViewContentNavigation(int pagesize,int pageTotalCount,int nextPageNum){
+            this.pageSize =pagesize;
+            this.pageTotalCount =pageTotalCount;
+            this.nextPageNum =nextPageNum;
+        }
+    }
+
+
+
     private int selectedPage[] ={1,0,0};
     String token;
     SharedPreferences spfile;
@@ -67,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvColection;
     int pageSize ;
     int pageTotalCount=0;//总页数
-    int pageNavigationCount=0;//导航页
+    //int pageNavigationCount=0;//导航页
     int nextPageNum=1;
     private int lastPosition = 0;//位置
     private int lastOffset = 0;//偏移量
@@ -224,7 +241,7 @@ initNavigationBar();
         });
 
     }
-private void showlayout(java.util.List imageList ){
+    private void showlayout(java.util.List imageList ){
 
         rvImageGallery.setLayoutManager(new LinearLayoutManager(this));
         if(pageTotalCount<2)
@@ -272,8 +289,8 @@ private void showlayout(java.util.List imageList ){
                            {intentLogin();
                            return;}
                            else if(imagePage.getMsg().equals("显示成功")){try{
-if(nextPageNum!=0){  pageTotalCount++;
-    showlayout(imagePage.getData().getList());}
+                           if(nextPageNum!=0){  pageTotalCount++;
+                           showlayout(imagePage.getData().getList());}
 
                            }
                            catch (Exception e)
@@ -313,7 +330,7 @@ if(nextPageNum!=0){  pageTotalCount++;
                 break;
         }
     }
-public void highlightNavigationBarItem(int item,View selectedView){
+    public void highlightNavigationBarItem(int item,View selectedView){
    View animatorview =null;
    TextView text=null;
 targetPos = (item+1)*0.25f;
@@ -364,7 +381,7 @@ tvColection.setText("收藏");
         }
 
 }
-public void highlightNavigationItemAnimation(View view, TextView text){
+    public void highlightNavigationItemAnimation(View view, TextView text){
 text.setText(null);
     final View animationView = view;
     ValueAnimator animator = ValueAnimator.ofFloat(0,-50);
@@ -420,7 +437,7 @@ selectedPos =targetPos;
 
 
 }
-public void unHighlightNavigetionAnimation(View view){
+    public void unHighlightNavigetionAnimation(View view){
     final View animationView = view;
     ValueAnimator animator = ValueAnimator.ofFloat(-50,0);
     final View finalAnimatorview = view;
