@@ -57,9 +57,9 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView rvImageGallery ;
     FloatingActionButton publicationNewImage ;
     FloatingActionButton fabLogOut;
-    ImageView ivExplore;
-    ImageView ivPublish;
-    ImageView ivCollection;
+    View ivExplore;
+    View ivPublish;
+    View ivCollection;
     int pageSize ;
     int pageTotalCount=0;//总页数
     int pageNavigationCount=0;//导航页
@@ -306,7 +306,7 @@ if(nextPageNum!=0){  pageTotalCount++;
         }
     }
 public void highlightNavigationBarItem(int item,View selectedView){
-   ImageView animatorview =null;
+   View animatorview =null;
 targetPos = (item+1)*0.25f;
         if(selectedPage[item]==1){
             return;
