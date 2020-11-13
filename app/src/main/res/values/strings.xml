@@ -16,5 +16,6 @@
     <string name="api_uploadpic">"http://101.37.172.244:8080/pic/image"</string>
     <string name="api_getisfavorite">"http://101.37.172.244:8080/pic/image/"</string>
     <string name="api_setisfavorite">"http://101.37.172.244:8080/pic/image/isgood"</string>
+    <string name="api_getimageLiked">"http://101.37.172.244:8080/pic/imageLiked/"</string>
     <integer name="gallery_size_per_page">5</integer>
 </resources>

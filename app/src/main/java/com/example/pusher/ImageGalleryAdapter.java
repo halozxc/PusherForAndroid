@@ -44,20 +44,19 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapte
 private List<com.example.pusher.List> galleryItemList;
 Activity activity;
     SharedPreferences spfile;
-ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
+  String token;
+     ImageGalleryAdapter(List<com.example.pusher.List> items, Activity activity){
     galleryItemList = items;
     this.activity =activity;
     spfile = activity.getSharedPreferences(activity.getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
+          token = spfile.getString( activity.getString(R.string.login_token),null);
 }
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.image_gallery_item,parent,false);
         ViewHolder holder = new ViewHolder(view);
-
-
-
-       return holder;
+        return holder;
     }
 
     @Override
@@ -113,7 +112,7 @@ void syncUserInfo(final ViewHolder holder, int position){
     OkHttpClient client =new OkHttpClient();
     OkHttpClient client1 =new OkHttpClient();
     MediaType mediaType = MediaType.get("application/json; charset=utf-8");
-    Request request = new Request.Builder().url(activity.getString(R.string.api_get_user_info) +galleryItem.getUid()).build();
+    Request request = new Request.Builder().url(activity.getString(R.string.api_get_user_info) +galleryItem.getUid()).addHeader("token",token).build();
 
     Call call = client.newCall(request);
     call.enqueue(new Callback() {
@@ -148,7 +147,7 @@ void syncUserInfo(final ViewHolder holder, int position){
         }
     });
 
-    Request request1 = new Request.Builder().url(activity.getString(R.string.api_getisfavorite) + galleryItem.getPicId() + "/" + spfile.getString("user_id", null)).build();
+    Request request1 = new Request.Builder().url(activity.getString(R.string.api_getisfavorite) + galleryItem.getPicId() + "/" + spfile.getString("user_id", null)).addHeader("token",token).build();
 
     Call call1 = client1.newCall(request1);
     call1.enqueue(new Callback() {
@@ -202,7 +201,7 @@ void changeFavoriteState(final ViewHolder holder, final int position){
         e.printStackTrace();
     }
     RequestBody requestBody = RequestBody.create(mediaType,body.toString());
-    Request request = new Request.Builder().url(activity.getString(R.string.api_setisfavorite)).post(requestBody).build();
+    Request request = new Request.Builder().url(activity.getString(R.string.api_setisfavorite)).post(requestBody).addHeader("token",token).build();
     Call call =client.newCall(request);
     call.enqueue(new Callback() {
         @Override

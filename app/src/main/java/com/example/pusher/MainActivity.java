@@ -68,7 +68,7 @@
             }
         }
 
-
+   RecycleViewContentNavigation selectedNavigation;
         RecycleViewContentNavigation exploreNavigation;
         RecycleViewContentNavigation collectionNavigation;
         private int selectedPage[] ={1,0,0};
@@ -106,8 +106,8 @@
             tbsNavigationItem =findViewById(R.id.tbsNavigationItem);
             spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
             token = spfile.getString( getString(R.string.login_token),null);
-            exploreNavigation = new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getpic));
-            //collectionNavigation =new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string));
+           selectedNavigation = exploreNavigation = new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getpic));
+            collectionNavigation =new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getimageLiked)+spfile.getString("user_id","")+"?");
             //pageSize = Integer.parseInt(getString(R.integer.gallery_size_per_page));//每一页5张图
 
             publicationNewImage =findViewById(R.id.fabPublicNewImage);
@@ -117,7 +117,7 @@
                 intentLogin();
             }
             else{
-                getImageList(exploreNavigation);
+                getImageList(selectedNavigation);
 
             }
 
@@ -140,8 +140,8 @@
 
                     LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
                     try{ View topView = manager.getChildAt(0); //获取可视的第一个view
-                       exploreNavigation.lastOffset = topView.getTop(); //获取与该view的顶部的偏移量
-                        exploreNavigation.lastPosition = manager.getPosition(topView);  //得到该View的数组位置
+                       selectedNavigation.lastOffset = topView.getTop(); //获取与该view的顶部的偏移量
+                        selectedNavigation.lastPosition = manager.getPosition(topView);  //得到该View的数组位置
                     }
                     catch (Exception e){
                         e.printStackTrace();
@@ -157,9 +157,9 @@
                         // 判断是否滚动到底部，并且是向右滚动
                         if (lastVisibleItem == (totalItemCount - 1) && isSlidingToLast) {
                             //加载更多功能的代码
-                           if(exploreNavigation.nextPageNum!=0){Toast.makeText(MainActivity.this,"正在拼命加载",Toast.LENGTH_SHORT).show();
-                               getImageList(exploreNavigation);}
-                           else if(exploreNavigation.nextPageNum==0){
+                           if(selectedNavigation.nextPageNum!=0){Toast.makeText(MainActivity.this,"正在拼命加载",Toast.LENGTH_SHORT).show();
+                               getImageList(selectedNavigation);}
+                           else if(selectedNavigation.nextPageNum==0){
                                Toast.makeText(MainActivity.this,"精彩见底了，返回刷新试试吧",Toast.LENGTH_SHORT).show();
                            }
 
@@ -188,25 +188,45 @@
         llExplore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                selectedNavigation = exploreNavigation;
+                if(exploreNavigation.pageTotalCount==0){
+                    getImageList(selectedNavigation);
+                }
+                else
+                {
+                    showlayout(selectedNavigation);
+                }
+
                 highlightNavigationBarItem(0,llExplore);
             }
         });
         llCollection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                selectedNavigation =collectionNavigation;
+                if(collectionNavigation.pageTotalCount==0){
+                    getImageList(collectionNavigation);
+                }
+                else {
+                    showlayout(selectedNavigation);
+                }
+
                 highlightNavigationBarItem(2,llCollection);
             }
         });
         llPublish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 highlightNavigationBarItem(1,llPublish);
             }
         });
         tbTitle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                rvImageGallery.smoothScrollToPosition(0);//滚动回顶部
+
+                rvImageGallery.smoothScrollToPosition(0);
             }
         });
         }
@@ -245,7 +265,15 @@
             });
 
         }
+private void showlayout(RecycleViewContentNavigation recycleViewContentNavigation){
+           if(!rvImageGallery.getAdapter().equals(recycleViewContentNavigation))
+           {
+               rvImageGallery.setAdapter(recycleViewContentNavigation.adapter);
+               ((LinearLayoutManager)rvImageGallery.getLayoutManager()) .scrollToPositionWithOffset(recycleViewContentNavigation.lastPosition, recycleViewContentNavigation.lastOffset);
+           }
 
+
+}
         private void showlayout(java.util.List imageList,RecycleViewContentNavigation recycleViewContentNavigation ){
 
 
@@ -280,11 +308,12 @@
                     @Override
                     public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                         final String res = Objects.requireNonNull(response.body()).string();
-
+                        Log.d("image list is:",res);
                         final Gson gson = new Gson();
+
                         final  com.example.pusher.ImagePage imagePage = gson.fromJson(res,com.example.pusher.ImagePage.class);
-                        com.example.pusher.Data pageinfo =imagePage.getData();
-                        recycleViewContentNavigation.nextPageNum = pageinfo.getNextPage();
+                        final com.example.pusher.Data pageinfo = imagePage.getData();
+
                         Log.d("nextPage:",String.valueOf(recycleViewContentNavigation.nextPageNum));
                         runOnUiThread(new Runnable() {
                             @Override
@@ -298,6 +327,7 @@
                                 }
                                 else if(imagePage.getMsg().equals("显示成功"))
                                 {
+                                    recycleViewContentNavigation.nextPageNum = pageinfo.getNextPage();
                                     try{
                                         if(recycleViewContentNavigation.nextPageNum!=0)
                                         {
@@ -337,7 +367,7 @@
                         Toast.makeText(MainActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
                         token = spfile.getString(getString(R.string.login_token),null);//refresh token
-                        getImageList(exploreNavigation);
+                        getImageList(selectedNavigation);
                     }
                     break;
             }
