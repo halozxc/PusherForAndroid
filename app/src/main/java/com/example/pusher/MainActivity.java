@@ -15,6 +15,7 @@
     import android.content.Context;
     import android.content.Intent;
     import android.content.SharedPreferences;
+    import android.os.Build;
     import android.os.Bundle;
     import android.util.Log;
     import android.view.View;
@@ -111,7 +112,10 @@
             //pageSize = Integer.parseInt(getString(R.integer.gallery_size_per_page));//每一页5张图
 
             publicationNewImage =findViewById(R.id.fabPublicNewImage);
-    initNavigationBar();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
+            }
+            initNavigationBar();
             if(token==null)
             {
                 intentLogin();
@@ -189,7 +193,7 @@
             @Override
             public void onClick(View v) {
                 selectedNavigation = exploreNavigation;
-                if(exploreNavigation.pageTotalCount==0){
+                if(selectedNavigation.pageTotalCount==0){
                     getImageList(selectedNavigation);
                 }
                 else
@@ -205,7 +209,7 @@
             public void onClick(View v) {
 
                 selectedNavigation =collectionNavigation;
-                if(collectionNavigation.pageTotalCount==0){
+                if(selectedNavigation.pageTotalCount==0){
                     getImageList(collectionNavigation);
                 }
                 else {
