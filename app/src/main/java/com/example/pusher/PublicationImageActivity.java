@@ -180,7 +180,7 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
                     .addFormDataPart("uid",uid)
                     .build();//图片服务器定义名字，
             OkHttpClient okHttpClient=new OkHttpClient();
-            Request request=new Request.Builder().url(getString(R.string.api_uploadpic)).post(body).addHeader("token",token).build();
+            Request request=new Request.Builder().url(getString(R.string.api_uploadpic)).post(body).addHeader("token",spfile.getString("login_token","")).build();
             Call call = client.newCall(request);
             call.enqueue(new Callback() {
                 @Override
