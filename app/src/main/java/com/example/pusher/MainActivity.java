@@ -391,8 +391,8 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
                     switch (i){
                         case 0:
                             animatorview =  llExplore;
-    text=tvExplore;
-    tvExplore.setText("发现");
+                           text=tvExplore;
+                          tvExplore.setText("发现");
                             break;
 
 
@@ -400,14 +400,15 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
 
                             animatorview = llPublish;
 
-    tvPublish.setText("发布");
+                            tvPublish.setText("发布");
+
                             break;
 
 
                         case 2:
                             animatorview = llCollection;
 
-    tvColection.setText("收藏");
+                            tvColection.setText("收藏");
                             break;
 
                     }
@@ -429,7 +430,7 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
 
     }
         public void highlightNavigationItemAnimation(View view, TextView text){
-    text.setText(null);
+         text.setText(null);
         final View animationView = view;
         ValueAnimator animator = ValueAnimator.ofFloat(0,-50);
         final View finalAnimatorview = view;
@@ -439,6 +440,9 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
                 animationView.setTranslationY((Float) animation.getAnimatedValue());
             }
         });
+        if(view==llPublish){
+            showPublicationButton(publicationNewImage);
+        }
         animator.setDuration(200);
         animator.setInterpolator(new AccelerateDecelerateInterpolator());
         animator.start();
@@ -488,6 +492,9 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
         final View animationView = view;
         ValueAnimator animator = ValueAnimator.ofFloat(-50,0);
         final View finalAnimatorview = view;
+            if(view==llPublish){
+                hidePublicationButton(publicationNewImage);
+            }
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -518,6 +525,39 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
     }
         public void initNavigationBar(){
          highlightNavigationItemAnimation(llExplore,tvExplore);//默认选中左边第一个
+            hidePublicationButton(publicationNewImage );
+        }
+        public void  showPublicationButton(View view){
+            final View animationView = view;
+            ValueAnimator animator = ValueAnimator.ofFloat(0,1);
+            final View finalAnimatorview = view;
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    animationView.setScaleX((Float) animation.getAnimatedValue());
+                    animationView.setScaleY((Float) animation.getAnimatedValue());
+                }
+            });
+
+            animator.setDuration(200);
+            animator.setInterpolator(new LinearInterpolator());
+            animator.start();
+        }
+        public void  hidePublicationButton(View view){
+            final View animationView = view;
+            ValueAnimator animator = ValueAnimator.ofFloat(1,0);
+            final View finalAnimatorview = view;
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    animationView.setScaleX((Float) animation.getAnimatedValue());
+                    animationView.setScaleY((Float) animation.getAnimatedValue());
+                }
+            });
+
+            animator.setDuration(200);
+            animator.setInterpolator(new LinearInterpolator());
+            animator.start();
         }
 
     }

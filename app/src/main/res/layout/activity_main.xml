@@ -43,16 +43,7 @@ android:layout_marginBottom="50dp"
 
             app:layout_constraintVertical_bias="0.0" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fabPublicNewImage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:clickable="true"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/rvImageGallery"
-            app:srcCompat="@mipmap/plus" />
+
 
         <com.example.pusher.tabBarShape
             android:id="@+id/tbsNavigationItem"
@@ -65,6 +56,23 @@ android:layout_marginBottom="50dp"
             app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:padding="5dp"
+            app:layout_constraintBottom_toTopOf="@+id/tbsNavigationItem">
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabPublicNewImage"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+
+                android:clickable="true"
+
+                app:srcCompat="@mipmap/plus" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/bottomitems"
             android:layout_width="match_parent"
             android:layout_height="80dp"
 
