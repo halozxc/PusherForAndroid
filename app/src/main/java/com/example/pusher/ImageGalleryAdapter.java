@@ -61,12 +61,22 @@ Activity activity;
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-     com.example.pusher.List galleryItem = galleryItemList.get(position);
+     final com.example.pusher.List galleryItem = galleryItemList.get(position);
 
         holder.favoriteImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 holder.isfavorite = holder.isfavorite ? false:true;
+                int _count= galleryItem.getGoodCount();
+                if(holder.isfavorite){
+                    _count++;
+
+                }
+                else{
+                    _count--;
+                }
+                galleryItem.setGoodCount(_count);
+                holder.goodcountText.setText(galleryItem.getGoodCount()>0 ?  galleryItem.getGoodCount()+"人感觉很赞" : "");
                 Glide.with(activity).load(holder.isfavorite? R.mipmap.favorite_fill  : R.mipmap.favorite).into(holder.favoriteImage);
                    changeFavoriteState(holder,position);
             }

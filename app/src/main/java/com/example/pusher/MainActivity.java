@@ -2,6 +2,7 @@
 
     import androidx.annotation.NonNull;
     import androidx.annotation.Nullable;
+    import androidx.appcompat.app.AlertDialog;
     import androidx.appcompat.app.AppCompatActivity;
     import androidx.appcompat.widget.Toolbar;
     import androidx.appcompat.widget.ViewUtils;
@@ -13,15 +14,18 @@
     import android.animation.ValueAnimator;
     import android.annotation.SuppressLint;
     import android.content.Context;
+    import android.content.DialogInterface;
     import android.content.Intent;
     import android.content.SharedPreferences;
     import android.os.Build;
     import android.os.Bundle;
+    import android.os.Debug;
     import android.util.Log;
     import android.view.View;
     import android.view.animation.AccelerateDecelerateInterpolator;
     import android.view.animation.LinearInterpolator;
     import android.widget.Button;
+    import android.widget.EditText;
     import android.widget.ImageView;
     import android.widget.LinearLayout;
     import android.widget.TextView;
@@ -51,7 +55,7 @@
     import okhttp3.Response;
     import okio.BufferedSink;
 
-    public class MainActivity extends AppCompatActivity {
+    public class  MainActivity extends AppCompatActivity {
         class RecycleViewContentNavigation{
             int pageSize =0;
             int pageTotalCount=0;//总页数
@@ -66,6 +70,14 @@
                 this.pageTotalCount =pageTotalCount;
                 this.nextPageNum =nextPageNum;
                 this.url =url;
+            }
+            private void clear(){
+
+                pageTotalCount=0;//总页数
+                 lastPosition = 0;//位置
+                 lastOffset = 0;//偏移量
+                 nextPageNum=1;
+                adapter=null;
             }
         }
 
@@ -83,7 +95,10 @@
         View llCollection;
         TextView tvExplore;
         TextView tvPublish;
+        TextView tvaccountTitle;
+        TextView tvnickTitle;
         TextView tvColection;
+        ImageView iveditnick;
         Toolbar tbTitle;
         private float selectedPos=0.25f;//别问我为什么是0.25，我不想解释
         private float targetPos = 0.25f;
@@ -104,14 +119,19 @@
             tvColection =findViewById(R.id.tvCollection);
             fabLogOut = findViewById(R.id.fabLogOut);
             tbTitle =findViewById(R.id.tbTitle);
+            tvaccountTitle =findViewById(R.id.tvaccounttitle);
+            tvnickTitle =findViewById(R.id.tvnicktitle);
             tbsNavigationItem =findViewById(R.id.tbsNavigationItem);
+            iveditnick =findViewById(R.id.iveditnick);
             spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
             token = spfile.getString( getString(R.string.login_token),null);
-           selectedNavigation = exploreNavigation = new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getpic));
-            collectionNavigation =new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getimageLiked)+spfile.getString("user_id","")+"?");
-            //pageSize = Integer.parseInt(getString(R.integer.gallery_size_per_page));//每一页5张图
+            selectedNavigation = exploreNavigation = new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getpic));
+            //collectionNavigation =new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getimageLiked)+spfile.getString("user_id","")+"?");
 
-            publicationNewImage =findViewById(R.id.fabPublicNewImage);
+            //pageSize = Integer.parseInt(getString(R.integer.gallery_size_per_page));//每一页5张图
+            tvnickTitle.setText(spfile.getString("user_nickname",""));
+            tvaccountTitle.setText(spfile.getString("user_account",""));
+            publicationNewImage = findViewById(R.id.fabPublicNewImage);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
             }
@@ -121,6 +141,8 @@
                 intentLogin();
             }
             else{
+                Log.d("user id is:",spfile.getString("user_id",""));
+                collectionNavigation =new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getimageLiked)+spfile.getString("user_id","")+"?");
                 getImageList(selectedNavigation);
 
             }
@@ -131,7 +153,7 @@
         public void onClick(View view) {
 
             Intent intent =new Intent(MainActivity.this,PublicationImageActivity.class);
-            startActivity(intent);
+            startActivityForResult(intent,2);
         }
     });
             rvImageGallery.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -183,6 +205,13 @@
                     }
                 }
             });
+            iveditnick.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showInputDialog(tvnickTitle);
+
+                }
+            });
         fabLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -231,6 +260,8 @@
             public void onClick(View view) {
 
                 rvImageGallery.smoothScrollToPosition(0);
+                selectedNavigation.clear();
+                getImageList(selectedNavigation);
             }
         });
         }
@@ -303,6 +334,7 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
                 OkHttpClient client =new OkHttpClient();
                // MediaType mediaType = MediaType.get("application/json; charset=utf-8");
                 final Request request = new Request.Builder().url(recycleViewContentNavigation.url+"pageNum="+recycleViewContentNavigation.nextPageNum+"&pageSize="+recycleViewContentNavigation.pageSize).addHeader("token",token).build();
+                Log.d("url is",recycleViewContentNavigation.url+"pageNum="+recycleViewContentNavigation.nextPageNum+"&pageSize="+recycleViewContentNavigation.pageSize);
                 Call call = client.newCall(request);
                 call.enqueue(new Callback() {
                     @Override
@@ -317,7 +349,6 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
 
                         final  com.example.pusher.ImagePage imagePage = gson.fromJson(res,com.example.pusher.ImagePage.class);
                         final com.example.pusher.Data pageinfo = imagePage.getData();
-
                         Log.d("nextPage:",String.valueOf(recycleViewContentNavigation.nextPageNum));
                         runOnUiThread(new Runnable() {
                             @Override
@@ -333,12 +364,11 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
                                 {
                                     recycleViewContentNavigation.nextPageNum = pageinfo.getNextPage();
                                     try{
-                                        if(recycleViewContentNavigation.nextPageNum!=0)
-                                        {
+
                                             recycleViewContentNavigation.pageTotalCount++;
                                             showlayout(imagePage.getData().getList(),recycleViewContentNavigation);}
 
-                                    }
+
                                     catch (Exception e)
                                     {
                                         e.printStackTrace();
@@ -355,6 +385,7 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
 
         }
         private void intentLogin(){
+
             Intent intent =new Intent(MainActivity.this,login.class);
 
             startActivityForResult(intent,1);
@@ -362,6 +393,7 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
 
         }
 
+        @SuppressLint("ResourceType")
         @Override
         protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
@@ -371,9 +403,19 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
                         Toast.makeText(MainActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
                         token = spfile.getString(getString(R.string.login_token),null);//refresh token
+                        collectionNavigation =new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getimageLiked)+spfile.getString("user_id","")+"?");
+                        Log.d("now user_id is",spfile.getString("user_id",""));
                         getImageList(selectedNavigation);
+
                     }
                     break;
+                case 2://publicimage
+                    if(resultCode == RESULT_OK){
+                        Toast.makeText(MainActivity.this,"上传成功",Toast.LENGTH_SHORT).show();
+                        exploreNavigation.clear();
+                        selectedNavigation=exploreNavigation;
+                        getImageList(selectedNavigation);
+                    }
             }
         }
         public void highlightNavigationBarItem(int item,View selectedView){
@@ -558,6 +600,36 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
             animator.setDuration(200);
             animator.setInterpolator(new LinearInterpolator());
             animator.start();
+        }
+        private void showInputDialog(final View bindingView) {
+            /*@setView 装入一个EditView
+             */
+            final EditText editText = new EditText(MainActivity.this);
+            try{
+                editText.setText(((TextView)bindingView).getText());
+            }
+            catch (Exception e){
+                editText.setText("");
+            }
+            AlertDialog.Builder inputDialog =
+                    new AlertDialog.Builder(MainActivity.this);
+            inputDialog.setTitle("你的昵称" ).setView(editText);
+            inputDialog.setPositiveButton("确定",
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Toast.makeText(MainActivity.this,
+                                    editText.getText().toString(),
+                                    Toast.LENGTH_SHORT).show();
+                        if(!editText.getText().equals(((TextView)bindingView).getText())){
+                            ((TextView)bindingView).setText(editText.getText());
+                            SharedPreferences.Editor edit = spfile.edit();
+                            edit.putString("user_nickname",editText.getText().toString());
+                            edit.apply();
+                            edit.commit();
+                        }
+                        }
+                    }).show();
         }
 
     }
