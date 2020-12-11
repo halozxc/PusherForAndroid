@@ -6,6 +6,7 @@
     import androidx.appcompat.app.AppCompatActivity;
     import androidx.appcompat.widget.Toolbar;
     import androidx.appcompat.widget.ViewUtils;
+    import androidx.drawerlayout.widget.DrawerLayout;
     import androidx.recyclerview.widget.LinearLayoutManager;
     import androidx.recyclerview.widget.MergeAdapter;
     import androidx.recyclerview.widget.RecyclerView;
@@ -21,6 +22,7 @@
     import android.os.Bundle;
     import android.os.Debug;
     import android.util.Log;
+    import android.view.Gravity;
     import android.view.View;
     import android.view.animation.AccelerateDecelerateInterpolator;
     import android.view.animation.LinearInterpolator;
@@ -100,7 +102,9 @@
         TextView tvaccountTitle;
         TextView tvnickTitle;
         TextView tvColection;
+       DrawerLayout dlmain;
         ImageView iveditnick;
+        ImageView ivmenu;
         Toolbar tbTitle;
         private float selectedPos=0.25f;//别问我为什么是0.25，我不想解释
         private float targetPos = 0.25f;
@@ -123,6 +127,8 @@
             tvColection =findViewById(R.id.tvCollection);
             fabLogOut = findViewById(R.id.fabLogOut);
             tbTitle =findViewById(R.id.tbTitle);
+            ivmenu =findViewById(R.id.ivmenu);
+            dlmain =findViewById(R.id.dlmain);
             tvaccountTitle =findViewById(R.id.tvaccounttitle);
             tvnickTitle =findViewById(R.id.tvnicktitle);
             tbsNavigationItem =findViewById(R.id.tbsNavigationItem);
@@ -216,7 +222,14 @@
 
                 }
             });
-        fabLogOut.setOnClickListener(new View.OnClickListener() {
+        ivmenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               dlmain.openDrawer(Gravity.START);
+
+            }
+        });
+            fabLogOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 intentLogin();
