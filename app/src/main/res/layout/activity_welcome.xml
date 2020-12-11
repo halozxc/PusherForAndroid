@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="28dp"
         android:layout_marginTop="52dp"
-        android:text="邮箱"
+        android:text="用户名"
         android:textColor="@color/colorAccent"
         android:textSize="20dp"
 

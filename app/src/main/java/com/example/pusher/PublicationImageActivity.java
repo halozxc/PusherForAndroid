@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -65,6 +66,7 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
     Uri imageUri;
     String imagePath="";
     EditText etImageDescriptionl;
+    TextView tvnickname;
     Button btpublic;
     SharedPreferences spfile;
     String uid ;
@@ -87,6 +89,8 @@ private final int REQUEST_EXTERNAL_STORAGE =1;
 
             }
         }
+        spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
+
         publicImage =findViewById(R.id.ivpublicationContent);
         etImageDescriptionl =findViewById(R.id.etImageDespription);
         btpublic =findViewById(R.id.btPublic);

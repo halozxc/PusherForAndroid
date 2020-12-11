@@ -101,7 +101,7 @@ public class login extends AppCompatActivity {
         try {
             requestContent.put("username",String.valueOf(etAccount.getText()) );
             requestContent.put("password",String.valueOf(etPassword.getText()));
-            requestContent.put("nickname",String.valueOf("new_pusher"+r.nextInt()%10000));
+            requestContent.put("nickname",String.valueOf(etAccount.getText()));
 
 
         }catch (Exception e){

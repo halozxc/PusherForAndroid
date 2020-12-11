@@ -143,5 +143,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@mipmap/logout" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="退出登录"
+        app:layout_constraintBottom_toBottomOf="@+id/menu_background"
+        app:layout_constraintEnd_toStartOf="@+id/fabLogOut" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
