@@ -11,11 +11,17 @@
     <string name="api_get_user_info">"http://101.37.172.244:8080/pic/admin/"</string>
     <string name="api_image_address">"http://101.37.172.244:8099/zxm/"</string>
     <string name="api_register">"http://101.37.172.244:8080/pic/register"</string>
-<string name="api_login">"http://101.37.172.244:8080/pic/login"</string>
+    <string name="api_login">"http://101.37.172.244:8080/pic/login"</string>
     <string name="api_getpic">"http://101.37.172.244:8080/pic/images?"</string>
     <string name="api_uploadpic">"http://101.37.172.244:8080/pic/image"</string>
     <string name="api_getisfavorite">"http://101.37.172.244:8080/pic/image/"</string>
     <string name="api_setisfavorite">"http://101.37.172.244:8080/pic/image/isgood"</string>
     <string name="api_getimageLiked">"http://101.37.172.244:8080/pic/imageLiked/"</string>
     <integer name="gallery_size_per_page">5</integer>
+    <string name="title_activity_vipactivity">vipactivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>
