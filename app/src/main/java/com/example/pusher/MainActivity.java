@@ -435,6 +435,8 @@ private void showlayout(RecycleViewContentNavigation recycleViewContentNavigatio
                         Toast.makeText(MainActivity.this,"登录成功",Toast.LENGTH_SHORT).show();
                         spfile = getSharedPreferences(getResources().getString(R.string.share_preference_file),MODE_PRIVATE);
                         token = spfile.getString(getString(R.string.login_token),null);//refresh token
+                        tvnickTitle.setText(spfile.getString("user_nickname",""));
+                        tvaccountTitle.setText(spfile.getString("user_account",""));
                         collectionNavigation =new RecycleViewContentNavigation(Integer.parseInt(getString(R.integer.gallery_size_per_page)),0,1,getString(R.string.api_getimageLiked)+spfile.getString("user_id","")+"?");
                         Log.d("now user_id is",spfile.getString("user_id",""));
                         getImageList(selectedNavigation);
