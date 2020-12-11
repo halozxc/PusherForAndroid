@@ -93,6 +93,8 @@
         View llExplore;
         View llPublish;
         View llCollection;
+        View llVipCenter;
+        View llmall;
         TextView tvExplore;
         TextView tvPublish;
         TextView tvaccountTitle;
@@ -114,6 +116,8 @@
             llExplore =findViewById(R.id.llExplore);
             llPublish =findViewById(R.id.llPublication);
             llCollection =findViewById(R.id.llCollection);
+            llVipCenter = findViewById(R.id.llvipcenter);
+            llmall = findViewById(R.id.llmall);
             tvExplore = findViewById(R.id.tvExplore);
             tvPublish =findViewById(R.id.tvPublication);
             tvColection =findViewById(R.id.tvCollection);
@@ -264,6 +268,21 @@
                 getImageList(selectedNavigation);
             }
         });
+        llmall.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(MainActivity.this,MallActivity.class);
+                startActivity(intent);
+            }
+        });
+        llVipCenter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent =new Intent(MainActivity.this,vipactivity.class);
+                startActivity(intent);
+            }
+        });
+
         }
 
         void loadmenubackground(){
